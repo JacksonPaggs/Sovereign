@@ -245,6 +245,21 @@
   .ring-r2 { transform-box: fill-box; transform-origin: center; animation: ring-ccw 55s linear infinite; }
   .ring-r1 { transform-box: fill-box; transform-origin: center; animation: ring-cw  35s linear infinite; }
 
+  /* ── BACKGROUND PRECISION INSTRUMENT ── */
+  #bg-precision {
+    position: fixed; inset: 0; z-index: 0;
+    pointer-events: none;
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0.07;
+  }
+  #bg-precision-svg {
+    width: 90vmin; height: 90vmin;
+    overflow: visible;
+  }
+  .bg-ring-r3 { transform-box: fill-box; transform-origin: center; animation: ring-cw  270s linear infinite; }
+  .bg-ring-r2 { transform-box: fill-box; transform-origin: center; animation: ring-ccw 165s linear infinite; }
+  .bg-ring-r1 { transform-box: fill-box; transform-origin: center; animation: ring-cw  105s linear infinite; }
+
   .hero-scroll {
     position: absolute; bottom: 32px; left: 72px;
     display: flex; align-items: center; gap: 12px; z-index: 1;
@@ -496,11 +511,16 @@
     .service-row::before { display: none; }
     .service-row-arrow { opacity: 0.5; transform: none; }
     .marquee-track { animation: none; }
-    .ring-r1, .ring-r2, .ring-r3 { animation: none; }
+    .ring-r1, .ring-r2, .ring-r3,
+    .bg-ring-r1, .bg-ring-r2, .bg-ring-r3 { animation: none; }
   }
 </style>
 </head>
 <body>
+
+<div id="bg-precision" aria-hidden="true">
+  <svg id="bg-precision-svg" viewBox="-155 -155 310 310"></svg>
+</div>
 
 <nav>
   <div class="nav-logo">SOVEREIGN</div>
@@ -645,152 +665,124 @@
     });
   });
 
-  /* ── PRECISION INSTRUMENT ── */
-  (function buildPrecision() {
-    const svg = document.getElementById('precision-svg');
-    if (!svg) return;
+  /* ── PRECISION INSTRUMENT BUILDER ── */
+  (function() {
     const NS = 'http://www.w3.org/2000/svg';
 
-    function el(tag, attrs) {
+    function svgEl(tag, attrs) {
       const e = document.createElementNS(NS, tag);
       for (const [k, v] of Object.entries(attrs)) e.setAttribute(k, v);
       return e;
     }
 
-    /* glow filter */
-    const defs = el('defs', {});
-    const filt = el('filter', { id: 'prec-glow', x: '-50%', y: '-50%', width: '200%', height: '200%' });
-    const blur = el('feGaussianBlur', { stdDeviation: '2.5', result: 'blur' });
-    const merge = el('feMerge', {});
-    const mn1 = el('feMergeNode', { in: 'blur' });
-    const mn2 = el('feMergeNode', { in: 'SourceGraphic' });
-    merge.appendChild(mn1); merge.appendChild(mn2);
-    filt.appendChild(blur); filt.appendChild(merge);
-    defs.appendChild(filt);
-    svg.appendChild(defs);
-
-    const GOLD = 'oklch(72% 0.135 82)';
-    const GOLD_DIM = 'oklch(72% 0.135 82 / 0.35)';
-    const GOLD_GHOST = 'oklch(72% 0.135 82 / 0.12)';
-
-    /* --- ring builder --- */
     function buildRing(r, tickCount, opts = {}) {
-      const g = el('g', { class: opts.cls || '', style: opts.animStyle || '' });
+      const GOLD     = 'oklch(72% 0.135 82)';
+      const GOLD_DIM = 'oklch(72% 0.135 82 / 0.35)';
+      const g = svgEl('g', { class: opts.cls || '' });
 
-      /* base circle */
-      g.appendChild(el('circle', {
+      g.appendChild(svgEl('circle', {
         cx: 0, cy: 0, r,
         stroke: GOLD_DIM, 'stroke-width': '0.5', fill: 'none'
       }));
 
-      /* tick marks */
       for (let i = 0; i < tickCount; i++) {
         const angle = (i / tickCount) * 360;
         const rad = (angle * Math.PI) / 180;
         const isMajor = i % (tickCount / (opts.majorEvery || 12)) === 0;
         const tickLen = isMajor ? 10 : 4;
-        const outerR = r;
-        const innerR = r - tickLen;
         const cos = Math.cos(rad), sin = Math.sin(rad);
-        g.appendChild(el('line', {
-          x1: cos * outerR, y1: sin * outerR,
-          x2: cos * innerR, y2: sin * innerR,
+
+        g.appendChild(svgEl('line', {
+          x1: cos * r,            y1: sin * r,
+          x2: cos * (r-tickLen),  y2: sin * (r-tickLen),
           stroke: isMajor ? GOLD : GOLD_DIM,
           'stroke-width': isMajor ? '1' : '0.4',
           'stroke-linecap': 'round'
         }));
 
-        /* degree label on major ticks of outer ring */
         if (opts.labels && isMajor) {
-          const labelR = r - 20;
-          const t = el('text', {
-            x: cos * labelR, y: sin * labelR,
-            fill: GOLD_DIM,
-            'font-size': '6',
+          const lr = r - 20;
+          const t = svgEl('text', {
+            x: cos * lr, y: sin * lr,
+            fill: GOLD_DIM, 'font-size': '6',
             'font-family': 'Bricolage Grotesque, sans-serif',
-            'text-anchor': 'middle',
-            'dominant-baseline': 'central',
-            transform: `rotate(${angle}, ${cos * labelR}, ${sin * labelR})`
+            'text-anchor': 'middle', 'dominant-baseline': 'central',
+            transform: `rotate(${angle},${cos*lr},${sin*lr})`
           });
           t.textContent = angle === 0 ? 'N' : angle === 90 ? 'E' : angle === 180 ? 'S' : angle === 270 ? 'W' : `${angle}°`;
           g.appendChild(t);
         }
 
-        /* diamond markers on inner ring at every 4th tick */
         if (opts.diamonds && i % 4 === 0) {
           const dR = r - 2;
           const cx2 = cos * dR, cy2 = sin * dR;
           const size = isMajor ? 4 : 2.5;
-          const perp = angle + 90;
-          const pr = (perp * Math.PI) / 180;
-          const dx = Math.cos(pr) * size * 0.5;
-          const dy = Math.sin(pr) * size * 0.5;
-          const fw = Math.cos(rad) * size * 0.8;
-          const fh = Math.sin(rad) * size * 0.8;
-          const pts = [
-            `${cx2 + fw},${cy2 + fh}`,
-            `${cx2 + dx},${cy2 + dy}`,
-            `${cx2 - fw},${cy2 - fh}`,
-            `${cx2 - dx},${cy2 - dy}`
-          ].join(' ');
-          g.appendChild(el('polygon', {
-            points: pts,
-            fill: isMajor ? GOLD : 'none',
-            stroke: GOLD,
-            'stroke-width': '0.5'
+          const pr = ((angle + 90) * Math.PI) / 180;
+          const dx = Math.cos(pr) * size * 0.5, dy = Math.sin(pr) * size * 0.5;
+          const fw = cos * size * 0.8, fh = sin * size * 0.8;
+          g.appendChild(svgEl('polygon', {
+            points: `${cx2+fw},${cy2+fh} ${cx2+dx},${cy2+dy} ${cx2-fw},${cy2-fh} ${cx2-dx},${cy2-dy}`,
+            fill: isMajor ? GOLD : 'none', stroke: GOLD, 'stroke-width': '0.5'
           }));
         }
       }
       return g;
     }
 
-    /* outer ring: r=138, 72 ticks, CW 90s */
-    const r3 = buildRing(138, 72, {
-      cls: 'ring-r3', majorEvery: 8, labels: true,
-      animStyle: 'transform-box:fill-box;transform-origin:center;animation:ring-cw 90s linear infinite'
-    });
-    svg.appendChild(r3);
+    function buildInstrument(svgId, ringClsPrefix, showLabels, showGlow) {
+      const svg = document.getElementById(svgId);
+      if (!svg) return;
+      const GOLD = 'oklch(72% 0.135 82)';
 
-    /* middle ring: r=103, 60 ticks, CCW 55s */
-    const r2 = buildRing(103, 60, {
-      cls: 'ring-r2', majorEvery: 6,
-      animStyle: 'transform-box:fill-box;transform-origin:center;animation:ring-ccw 55s linear infinite'
-    });
-    svg.appendChild(r2);
+      if (showGlow) {
+        const defs = svgEl('defs', {});
+        const filt = svgEl('filter', { id: `glow-${svgId}`, x: '-50%', y: '-50%', width: '200%', height: '200%' });
+        const blur = svgEl('feGaussianBlur', { stdDeviation: '2.5', result: 'blur' });
+        const merge = svgEl('feMerge', {});
+        [svgEl('feMergeNode', { in: 'blur' }), svgEl('feMergeNode', { in: 'SourceGraphic' })].forEach(n => merge.appendChild(n));
+        filt.appendChild(blur); filt.appendChild(merge);
+        defs.appendChild(filt);
+        svg.appendChild(defs);
+      }
 
-    /* inner ring: r=68, 36 ticks + diamonds, CW 35s */
-    const r1 = buildRing(68, 36, {
-      cls: 'ring-r1', majorEvery: 4, diamonds: true,
-      animStyle: 'transform-box:fill-box;transform-origin:center;animation:ring-cw 35s linear infinite'
-    });
-    svg.appendChild(r1);
+      svg.appendChild(buildRing(138, 72, { cls: `${ringClsPrefix}-r3`, majorEvery: 8, labels: showLabels }));
+      svg.appendChild(buildRing(103, 60, { cls: `${ringClsPrefix}-r2`, majorEvery: 6 }));
+      svg.appendChild(buildRing(68,  36, { cls: `${ringClsPrefix}-r1`, majorEvery: 4, diamonds: true }));
 
-    /* static crosshair */
-    const ch = el('g', { opacity: '0.45' });
-    [[-145, 0, -54, 0], [54, 0, 145, 0], [0, -145, 0, -54], [0, 54, 0, 145]].forEach(([x1,y1,x2,y2]) => {
-      ch.appendChild(el('line', { x1, y1, x2, y2, stroke: GOLD, 'stroke-width': '0.6', 'stroke-dasharray': '2 4' }));
-    });
-    svg.appendChild(ch);
+      /* crosshair */
+      const ch = svgEl('g', { opacity: '0.45' });
+      [[-145,0,-54,0],[54,0,145,0],[0,-145,0,-54],[0,54,0,145]].forEach(([x1,y1,x2,y2]) =>
+        ch.appendChild(svgEl('line', { x1,y1,x2,y2, stroke: GOLD, 'stroke-width': '0.6', 'stroke-dasharray': '2 4' }))
+      );
+      svg.appendChild(ch);
 
-    /* 45° accent lines */
-    const acc = el('g', { opacity: '0.2' });
-    const d45 = 145 / Math.SQRT2;
-    [[-d45,-d45, -38,-38],[38,-38, d45,-d45],[38,38, d45,d45],[-d45,d45, -38,38]].forEach(([x1,y1,x2,y2]) => {
-      acc.appendChild(el('line', { x1, y1, x2, y2, stroke: GOLD, 'stroke-width': '0.5' }));
-    });
-    svg.appendChild(acc);
+      /* 45° accent lines */
+      const acc = svgEl('g', { opacity: '0.2' });
+      const d = 145 / Math.SQRT2;
+      [[-d,-d,-38,-38],[38,-38,d,-d],[38,38,d,d],[-d,d,-38,38]].forEach(([x1,y1,x2,y2]) =>
+        acc.appendChild(svgEl('line', { x1,y1,x2,y2, stroke: GOLD, 'stroke-width': '0.5' }))
+      );
+      svg.appendChild(acc);
 
-    /* center diamond (unfilled) */
-    const cdSize = 10;
-    svg.appendChild(el('polygon', {
-      points: `0,${-cdSize} ${cdSize},0 0,${cdSize} ${-cdSize},0`,
-      fill: 'none', stroke: GOLD, 'stroke-width': '1'
-    }));
+      /* center diamond */
+      svg.appendChild(svgEl('polygon', {
+        points: '0,-10 10,0 0,10 -10,0',
+        fill: 'none', stroke: GOLD, 'stroke-width': '1'
+      }));
 
-    /* center glow dot */
-    const glowG = el('g', { filter: 'url(#prec-glow)' });
-    glowG.appendChild(el('circle', { cx: 0, cy: 0, r: 3, fill: GOLD }));
-    svg.appendChild(glowG);
+      if (showGlow) {
+        const g = svgEl('g', { filter: `url(#glow-${svgId})` });
+        g.appendChild(svgEl('circle', { cx: 0, cy: 0, r: 3, fill: GOLD }));
+        svg.appendChild(g);
+      } else {
+        svg.appendChild(svgEl('circle', { cx: 0, cy: 0, r: 2, fill: GOLD }));
+      }
+    }
+
+    /* hero instrument — full detail, fast */
+    buildInstrument('precision-svg', 'ring', true, true);
+    /* background instrument — same structure, slow via bg-ring-* classes */
+    buildInstrument('bg-precision-svg', 'bg-ring', false, false);
   })();
 </script>
 
