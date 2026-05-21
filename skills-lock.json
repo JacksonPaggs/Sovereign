@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "devils-advocate": {
+      "source": "majesticlabs-dev/majestic-marketplace",
+      "sourceType": "github",
+      "skillPath": "plugins/majestic-tools/skills/devils-advocate/SKILL.md",
+      "computedHash": "b18b9946f2daf8ca2ed67d5a2dae3ce5bdb44d655b5a2c741f734717b1c19364"
+    },
     "frontend-design": {
       "source": "anthropics/skills",
       "sourceType": "github",

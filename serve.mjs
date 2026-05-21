@@ -24,6 +24,37 @@ const MIME = {
 
 createServer(async (req, res) => {
   let path = req.url.split('?')[0];
+
+  if (path === '/download') {
+    try {
+      const data = await readFile(join(ROOT, 'index.html'));
+      res.writeHead(200, {
+        'Content-Type': 'text/html',
+        'Content-Disposition': 'attachment; filename="sovereign.html"',
+      });
+      res.end(data);
+    } catch {
+      res.writeHead(404);
+      res.end('Not found');
+    }
+    return;
+  }
+
+  if (path === '/download/handoff') {
+    try {
+      const data = await readFile(join(ROOT, 'HANDOFF.md'));
+      res.writeHead(200, {
+        'Content-Type': 'text/markdown',
+        'Content-Disposition': 'attachment; filename="HANDOFF.md"',
+      });
+      res.end(data);
+    } catch {
+      res.writeHead(404);
+      res.end('Not found');
+    }
+    return;
+  }
+
   if (path === '/') path = '/index.html';
   const file = join(ROOT, path);
   try {
@@ -37,4 +68,5 @@ createServer(async (req, res) => {
   }
 }).listen(PORT, () => {
   console.log(`Sovereign dev server running at http://localhost:${PORT}`);
+  console.log(`Download the file at  http://localhost:${PORT}/download`);
 });
