@@ -109,14 +109,53 @@ All breakpoints use `clamp()` for fluid type scaling. No layout breaks at any vi
 
 ---
 
-## 6. Interactions
+## 6. Interactions & Animations
 
-- Every clickable element has `hover`, `focus-visible`, and `active` states — no exceptions
-- Buttons: lift (`translateY(-2px)`) + shadow intensify on hover
-- Service cards: lift + border brightens on hover
-- Nav links: opacity increases on hover
-- Animate `transform` and `opacity` only — never `transition-all`
-- Scroll indicator: `opacity` fade animation on the descending line
+Animations follow **Emil Kowalski's animation best practices** (`emilkowal-animations` skill).
+
+### Easing
+- Default ease-out: `cubic-bezier(0.25, 0.46, 0.45, 0.94)` — all UI transitions
+- Dramatic entrance: `cubic-bezier(0.16, 1, 0.3, 1)` — hero sequence and scroll reveals
+- Never use CSS built-in keywords (`ease`, `ease-in-out`) — always custom cubic-bezier
+
+### Timing
+- UI transitions (hover, focus): ≤ 220ms
+- Hero entrance sequence: up to 0.9s — permitted by `strategy-marketing-exception`
+- Button press (`:active`): 100ms (fast) — release: 200ms (slower). Asymmetric by design.
+
+### Properties
+- Animate **only** `transform` and `opacity` — never layout properties, never `transition-all`
+- `will-change: transform` on buttons and cards that animate
+
+### Hero Entrance (staggered, on load)
+| Element | Delay | Duration |
+|---|---|---|
+| Nav | 50ms | 500ms fade-down |
+| Eyebrow | 150ms | 700ms fade-up |
+| H1 SOVEREIGN | 300ms | 900ms fade-up |
+| Body copy | 500ms | 700ms fade-up |
+| CTA buttons | 650ms | 700ms fade-up |
+| Scroll indicator | 1100ms | 600ms fade-in |
+| Glows | 0ms | 1200ms fade-in |
+
+### Scroll Reveals
+- `IntersectionObserver` with `rootMargin: 0px 0px -100px 0px` — fires 100px before viewport edge
+- Elements start at `opacity: 0; transform: translateY(28px)`
+- Fire once, do not reverse on scroll-up
+- Stats bar: 4 items stagger 100ms apart
+- Services section heading: reveal then cards stagger 100ms apart
+- CTA banner: single reveal as a unit
+
+### Per-element Interactions
+- **Buttons:** `translateY(-2px)` + shadow on hover; `scale(0.97)` on `:active`
+- **Service cards:** `translateY(-4px)` + border brightens + shadow on hover; icon scales `1.08×`
+- **Nav CTA:** `translateY(-1px)` on hover; `scale(0.97)` on active
+- **Service links:** gap expands from `6px` → `10px` on hover
+
+### Reduced Motion (`prefers-reduced-motion: reduce`)
+- All `transform` animations removed — opacity-only fallback retained
+- Scroll pulse animation slowed
+- Buttons still have a subtle `scale(0.99)` on press — not fully stripped per `polish-dont-remove-all`
 
 ---
 
