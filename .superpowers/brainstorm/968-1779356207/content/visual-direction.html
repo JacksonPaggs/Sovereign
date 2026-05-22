@@ -1,0 +1,249 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap');
+
+  .direction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .direction-card {
+    border-radius: 14px;
+    padding: 0;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.15s;
+    overflow: hidden;
+  }
+
+  .direction-card:hover { transform: translateY(-3px); }
+  .direction-card.selected { border-color: #a78bfa; }
+
+  .preview {
+    height: 160px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    gap: 6px;
+  }
+
+  .preview-name {
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    z-index: 1;
+  }
+
+  .preview-sub {
+    font-size: 9px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    opacity: 0.5;
+    z-index: 1;
+  }
+
+  .preview-cta {
+    margin-top: 10px;
+    font-size: 10px;
+    padding: 5px 14px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 1;
+  }
+
+  /* A: Dark Luxury */
+  .dark-luxury .preview {
+    background: #080608;
+  }
+  .dark-luxury .preview::before {
+    content: '';
+    position: absolute;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(180,140,60,0.18) 0%, transparent 70%);
+    top: -60px; left: -60px;
+  }
+  .dark-luxury .preview-name {
+    font-family: 'Cinzel', serif;
+    color: #e8d48a;
+  }
+  .dark-luxury .preview-sub { color: rgba(232,212,138,0.5); }
+  .dark-luxury .preview-cta {
+    background: transparent;
+    border: 1px solid rgba(232,212,138,0.5);
+    color: #e8d48a;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+  }
+
+  /* B: Electric Dark */
+  .electric-dark .preview {
+    background: #07050f;
+  }
+  .electric-dark .preview::before {
+    content: '';
+    position: absolute;
+    width: 300px; height: 200px;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.25) 0%, transparent 65%);
+    top: -40px; right: -60px;
+  }
+  .electric-dark .preview::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 200px;
+    background: radial-gradient(ellipse, rgba(34,211,238,0.12) 0%, transparent 65%);
+    bottom: -40px; left: -30px;
+  }
+  .electric-dark .preview-name {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #fff;
+    text-shadow: 0 0 30px rgba(139,92,246,0.6);
+  }
+  .electric-dark .preview-sub { color: rgba(139,92,246,0.8); }
+  .electric-dark .preview-cta {
+    background: linear-gradient(135deg, #8b5cf6, #22d3ee);
+    color: #fff;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* C: Clean Minimal */
+  .clean-minimal .preview {
+    background: #fafaf9;
+  }
+  .clean-minimal .preview-name {
+    font-family: 'Cormorant Garamond', serif;
+    color: #1a1a1a;
+    font-size: 28px;
+    letter-spacing: 0.08em;
+  }
+  .clean-minimal .preview-sub { color: rgba(0,0,0,0.35); }
+  .clean-minimal .preview-cta {
+    background: #1a1a1a;
+    color: #fff;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    border-radius: 2px;
+  }
+
+  /* D: Cosmic AI */
+  .cosmic-ai .preview {
+    background: #020410;
+  }
+  .cosmic-ai .preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(99,102,241,0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(236,72,153,0.15) 0%, transparent 45%),
+      radial-gradient(ellipse at 60% 90%, rgba(16,185,129,0.1) 0%, transparent 40%);
+  }
+  .cosmic-ai .preview-name {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+  .cosmic-ai .preview-sub { color: rgba(255,255,255,0.4); }
+  .cosmic-ai .preview-cta {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    font-family: 'Space Grotesk', sans-serif;
+    backdrop-filter: blur(8px);
+  }
+
+  .card-info {
+    background: rgba(255,255,255,0.04);
+    border-top: 1px solid rgba(255,255,255,0.07);
+    padding: 14px 18px;
+  }
+
+  .card-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 4px;
+  }
+
+  .card-desc {
+    font-size: 12px;
+    color: rgba(255,255,255,0.45);
+    line-height: 1.5;
+  }
+
+  .rec-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: rgba(139,92,246,0.2);
+    border: 1px solid rgba(139,92,246,0.4);
+    color: rgba(139,92,246,1);
+    margin-bottom: 6px;
+  }
+</style>
+
+<h2>What's Sovereign's visual direction?</h2>
+<p class="subtitle">Four distinct moods — each shows how the brand name would actually look. Click to choose.</p>
+
+<div class="direction-grid">
+
+  <div class="direction-card dark-luxury" data-choice="dark-luxury" onclick="toggleSelect(this)">
+    <div class="preview">
+      <div class="preview-name">SOVEREIGN</div>
+      <div class="preview-sub">Digital Studio</div>
+      <div class="preview-cta">Engage Us</div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">Dark Luxury</div>
+      <div class="card-desc">Deep black, gold accents. Old money meets new tech. Serious authority.</div>
+    </div>
+  </div>
+
+  <div class="direction-card electric-dark" data-choice="electric-dark" onclick="toggleSelect(this)">
+    <div class="preview">
+      <div class="preview-name">SOVEREIGN</div>
+      <div class="preview-sub">Digital Studio</div>
+      <div class="preview-cta">Get Started</div>
+    </div>
+    <div class="card-info">
+      <div class="rec-badge">★ My pick</div>
+      <div class="card-title">Electric Dark</div>
+      <div class="card-desc">Dark base, purple/cyan glow. Premium tech agency with AI-forward energy.</div>
+    </div>
+  </div>
+
+  <div class="direction-card clean-minimal" data-choice="clean-minimal" onclick="toggleSelect(this)">
+    <div class="preview">
+      <div class="preview-name">Sovereign</div>
+      <div class="preview-sub">Digital Studio</div>
+      <div class="preview-cta">Work With Us</div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">Clean Minimal</div>
+      <div class="card-desc">White, serif typography, razor-sharp layout. High-end consultancy feel.</div>
+    </div>
+  </div>
+
+  <div class="direction-card cosmic-ai" data-choice="cosmic-ai" onclick="toggleSelect(this)">
+    <div class="preview">
+      <div class="preview-name">SOVEREIGN</div>
+      <div class="preview-sub">Digital Studio</div>
+      <div class="preview-cta">Explore</div>
+    </div>
+    <div class="card-info">
+      <div class="card-title">Cosmic AI</div>
+      <div class="card-desc">Deep space, multi-color gradients. Feels like the future lives here.</div>
+    </div>
+  </div>
+
+</div>

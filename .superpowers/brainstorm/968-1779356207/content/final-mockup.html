@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sovereign — Final</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  /* ── OKLCH tokens — warm dark base, single gold accent, no violet ── */
+  :root {
+    --gold:       oklch(72% 0.135 82);
+    --gold-hi:    oklch(80% 0.13  82);
+    --gold-dim:   oklch(56% 0.09  82);
+    --gold-ghost: oklch(72% 0.135 82 / 0.12);
+    --ink:        oklch(8%  0.013 75);
+    --ink-2:      oklch(11% 0.013 75);
+    --ink-3:      oklch(15% 0.013 75);
+    --text:       oklch(93% 0.006 75);
+    --text-mid:   oklch(58% 0.008 75);
+    --text-low:   oklch(36% 0.007 75);
+    --rule:       oklch(20% 0.010 75);
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    background-color: var(--ink);
+    /* Ultra-faint dot grid — signals craft and precision at ~4% */
+    background-image: radial-gradient(oklch(72% 0.135 82 / 0.055) 1px, transparent 1px);
+    background-size: 28px 28px;
+    color: var(--text);
+    font-family: 'Bricolage Grotesque', system-ui, sans-serif;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    position: relative;
+  }
+
+  /* Page-wide cool atmospheric depth — violet as background element only,
+     never on text or UI. Restores the Gold→Electric depth we dropped. */
+  body::before {
+    content: '';
+    position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background:
+      radial-gradient(ellipse 70% 55% at 95% 5%,  oklch(56% 0.16 280 / 0.09) 0%, transparent 65%),
+      radial-gradient(ellipse 55% 50% at 5%  95%, oklch(72% 0.135 82 / 0.07) 0%, transparent 65%),
+      radial-gradient(ellipse 40% 40% at 50% 50%, oklch(56% 0.16 280 / 0.04) 0%, transparent 70%);
+  }
+
+  /* ── KEYFRAMES ── */
+  @keyframes letter-up {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(22px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fade-in {
+    from { opacity: 0; } to { opacity: 1; }
+  }
+  @keyframes fade-down {
+    from { opacity: 0; transform: translateY(-10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes row-in {
+    from { opacity: 0; transform: translateX(-18px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes scroll-pulse {
+    0%,100% { opacity: 0.5; transform: scaleY(1); }
+    50%     { opacity: 0.15; transform: scaleY(0.55); }
+  }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to   { transform: translateX(-50%); }
+  }
+
+  /* Scroll reveal classes */
+  .reveal     { opacity: 0; transform: translateY(24px); will-change: transform,opacity; }
+  .reveal-row { opacity: 0; transform: translateX(-16px); will-change: transform,opacity; }
+  .reveal.visible     { animation: fade-up 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .reveal-row.visible { animation: row-in  0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+  .s1 { animation-delay: 0ms   !important; }
+  .s2 { animation-delay: 100ms !important; }
+  .s3 { animation-delay: 200ms !important; }
+
+  /* Ensure all page content sits above the fixed atmospheric layer */
+  nav, section, div, footer { position: relative; z-index: 1; }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 20px 72px;
+    background: oklch(8% 0.013 75 / 0.85);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--rule);
+    animation: fade-down 0.45s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.05s both;
+  }
+  .nav-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 16px; font-weight: 900; letter-spacing: 0.18em;
+    color: var(--gold);
+  }
+  .nav-links { display: flex; align-items: center; gap: 40px; list-style: none; }
+  .nav-links a {
+    font-size: 11px; font-weight: 500; letter-spacing: 0.09em; text-transform: uppercase;
+    color: var(--text-mid); text-decoration: none;
+    transition: color 180ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .nav-links a:hover { color: var(--text); }
+
+  /* Directional hover CTA button */
+  .nav-cta {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 9px 22px; border-radius: 3px;
+    border: 1px solid oklch(72% 0.135 82 / 0.4);
+    color: var(--gold); background: transparent; text-decoration: none;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    position: relative; overflow: hidden;
+    transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                border-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 150ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    display: inline-block;
+  }
+  .nav-cta::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold);
+    transform: translateX(-105%);
+    transition: transform 250ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: -1;
+  }
+  .nav-cta:hover::before { transform: translateX(0); }
+  .nav-cta:hover { color: var(--ink); border-color: var(--gold); }
+  .nav-cta:active { transform: scale(0.97); transition-duration: 100ms; }
+
+  /* ── HERO — Left-aligned asymmetric (DESIGN_VARIANCE: 8) ── */
+  .hero {
+    min-height: 100dvh;
+    display: grid;
+    grid-template-columns: 1fr 0.7fr;
+    align-items: center;
+    padding: 130px 72px 90px;
+    position: relative;
+    overflow: hidden;
+    gap: 40px;
+  }
+
+  /* Hero atmospheric glows — gold anchors + cool depth layer */
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 60% 65% at 105% 10%, oklch(72% 0.135 82 / 0.14) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 55% at -5%  90%, oklch(72% 0.135 82 / 0.16) 0%, transparent 65%),
+      radial-gradient(ellipse 75% 70% at 85%  40%, oklch(56% 0.16 280 / 0.10) 0%, transparent 60%),
+      radial-gradient(ellipse 45% 45% at 30%  20%, oklch(56% 0.16 280 / 0.06) 0%, transparent 70%);
+    animation: fade-in 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+  }
+
+  .hero-content { z-index: 1; }
+
+  /* Per-letter animated SOVEREIGN wordmark */
+  .hero-wordmark {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(52px, 6.5vw, 88px);
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    line-height: 1;
+    color: var(--gold);
+    margin-bottom: 22px;
+    display: flex; flex-wrap: wrap;
+  }
+  .hero-wordmark .letter {
+    display: inline-block;
+    animation: letter-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    will-change: transform, opacity;
+  }
+
+  .hero-tagline {
+    font-size: clamp(14px, 1.4vw, 20px);
+    font-weight: 600; letter-spacing: 0.04em;
+    color: var(--text);
+    margin-bottom: 20px;
+    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+  }
+
+  .hero-sub {
+    font-size: clamp(14px, 1.1vw, 17px);
+    color: var(--text-mid); line-height: 1.75;
+    max-width: 50ch; margin-bottom: 44px;
+    font-weight: 400;
+    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.82s both;
+  }
+
+  .hero-actions {
+    display: flex; align-items: center; gap: 12px;
+    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+  }
+
+  /* Directional-fill primary button */
+  .btn-primary {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 14px 34px; border-radius: 3px; cursor: pointer; border: none;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: 'Bricolage Grotesque', sans-serif;
+    position: relative; overflow: hidden;
+    transition: transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                background 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  .btn-primary::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--gold-hi);
+    transform: translateX(-105%);
+    transition: transform 280ms cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 0;
+  }
+  .btn-primary span { position: relative; z-index: 1; }
+  .btn-primary:hover::before { transform: translateX(0); }
+  .btn-primary:hover { transform: translateY(-2px); }
+  .btn-primary:active { transform: scale(0.97); transition-duration: 100ms; }
+
+  .btn-ghost {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 13px 28px; border-radius: 3px; cursor: pointer;
+    border: 1px solid var(--rule); color: var(--text-mid); background: transparent;
+    font-family: 'Bricolage Grotesque', sans-serif;
+    transition: border-color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    will-change: transform;
+  }
+  .btn-ghost:hover { border-color: var(--text-mid); color: var(--text); }
+  .btn-ghost:active { transform: scale(0.97); transition-duration: 100ms; }
+
+  /* Right side — large atmospheric SOVEREIGN, bleeds off the right edge */
+  .hero-visual {
+    z-index: 1;
+    position: relative; overflow: visible;
+    display: flex; align-items: center; justify-content: flex-start;
+  }
+  .hero-visual-word {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(100px, 17vw, 280px);
+    font-weight: 900; letter-spacing: 0.06em; line-height: 1;
+    color: oklch(72% 0.135 82 / 0.09);
+    white-space: nowrap;
+    pointer-events: none; user-select: none;
+    margin-right: -18vw;
+    animation: fade-in 1.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1s both;
+    will-change: opacity;
+  }
+
+  /* Scroll indicator */
+  .hero-scroll {
+    position: absolute; bottom: 32px; left: 72px;
+    display: flex; align-items: center; gap: 12px; z-index: 1;
+    animation: fade-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.3s both;
+  }
+  .hero-scroll-label {
+    font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-low);
+  }
+  .hero-scroll-line {
+    width: 40px; height: 1px;
+    background: linear-gradient(to right, oklch(72% 0.135 82 / 0.4), transparent);
+    transform-origin: left;
+    animation: scroll-pulse 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.6s infinite;
+  }
+
+  /* ── MANIFESTO BAND ── */
+  .manifesto {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 56px 72px;
+    display: flex; align-items: flex-start; gap: 48px;
+    background: var(--ink-2);
+    position: relative; overflow: hidden;
+  }
+  .manifesto::before {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse 30% 200% at 0% 50%, oklch(72% 0.135 82 / 0.03) 0%, transparent 100%);
+  }
+  .manifesto-accent {
+    flex-shrink: 0;
+    display: flex; flex-direction: column; gap: 6px; padding-top: 6px;
+  }
+  .manifesto-dash {
+    width: 32px; height: 1px; background: var(--gold-dim);
+  }
+  .manifesto-dash:nth-child(2) { width: 16px; opacity: 0.5; }
+  .manifesto-text {
+    font-size: clamp(17px, 1.7vw, 24px);
+    font-weight: 500; color: var(--text-mid); line-height: 1.6;
+    max-width: 72ch;
+  }
+  .manifesto-text strong { color: var(--text); font-weight: 700; }
+
+  /* ── SERVICES — architectural numbered list with spotlight ── */
+  .services { padding: 96px 72px; }
+
+  .services-header { margin-bottom: 60px; }
+  .services-heading {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(26px, 3vw, 42px); font-weight: 700;
+    color: var(--text); letter-spacing: 0.04em; line-height: 1.1;
+  }
+
+  .services-list { border-top: 1px solid var(--rule); }
+
+  .service-row {
+    display: grid; grid-template-columns: 72px 1fr 36px;
+    align-items: center; gap: 40px;
+    padding: 40px 16px;
+    border-bottom: 1px solid var(--rule);
+    cursor: default; position: relative; overflow: hidden;
+    --spotlight-x: 50%; --spotlight-y: 50%;
+  }
+  /* Upgrade C: gold line sweeps left-to-right across top border on hover */
+  .service-row::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: var(--gold);
+    transform: scaleX(0); transform-origin: left;
+    transition: transform 420ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .service-row:hover::before { transform: scaleX(1); }
+  /* Spotlight effect — illuminates under cursor */
+  .service-row::after {
+    content: '';
+    position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(
+      circle 200px at var(--spotlight-x) var(--spotlight-y),
+      oklch(72% 0.135 82 / 0.05) 0%,
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 250ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .service-row:hover::after { opacity: 1; }
+  .service-row:hover .service-row-num { color: var(--gold); }
+  .service-row:hover .service-row-arrow {
+    opacity: 1;
+    transform: translateX(0);
+    color: var(--gold);
+  }
+
+  .service-row-num {
+    font-family: 'Cinzel', serif;
+    font-size: 12px; font-weight: 700; letter-spacing: 0.12em;
+    color: var(--text-low);
+    transition: color 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    align-self: start; padding-top: 4px;
+  }
+  .service-row-body { }
+  .service-row-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(17px, 1.8vw, 25px); font-weight: 700;
+    letter-spacing: 0.04em; color: var(--text); margin-bottom: 10px;
+  }
+  .service-row-desc {
+    font-size: 15px; color: var(--text-mid); line-height: 1.72; max-width: 54ch; font-weight: 400;
+  }
+  .service-row-arrow {
+    font-size: 20px; opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94),
+                transform 220ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    align-self: center;
+  }
+
+  /* ── MARQUEE BAND (Upgrade A) ── */
+  .marquee-band {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 18px 0;
+    overflow: hidden;
+    background: var(--ink);
+    user-select: none;
+  }
+  .marquee-track {
+    display: flex; white-space: nowrap;
+    animation: marquee 30s linear infinite;
+    will-change: transform;
+  }
+  .marquee-item {
+    font-family: 'Cinzel', serif;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.22em;
+    color: oklch(72% 0.135 82 / 0.45);
+    padding: 0 28px; flex-shrink: 0;
+    transition: color 200ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .marquee-item:hover { color: var(--gold); }
+  .marquee-dot {
+    color: oklch(72% 0.135 82 / 0.2);
+    font-size: 11px; flex-shrink: 0;
+  }
+
+  /* ── WORDMARK BREAK (Upgrade B) ── */
+  .wordmark-break {
+    border-top: 1px solid var(--rule);
+    border-bottom: 1px solid var(--rule);
+    padding: 40px 0;
+    overflow: hidden;
+    position: relative;
+    background: var(--ink);
+  }
+  .wordmark-break::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 100% at 50% 50%, oklch(72% 0.135 82 / 0.03) 0%, transparent 100%);
+    pointer-events: none;
+  }
+  .wordmark-break-text {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(64px, 13vw, 160px);
+    font-weight: 900; letter-spacing: 0.1em; line-height: 1;
+    color: oklch(72% 0.135 82 / 0.08);
+    padding-left: 6vw;
+    white-space: nowrap;
+    transition: color 600ms cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  .wordmark-break:hover .wordmark-break-text {
+    color: oklch(72% 0.135 82 / 0.14);
+  }
+
+  /* ── CTA BANNER ── */
+  .cta-section { padding: 0 72px 96px; }
+  .cta-inner {
+    background: var(--ink-2);
+    border: 1px solid var(--rule);
+    border-radius: 8px;
+    padding: 72px 80px;
+    display: flex; align-items: center; justify-content: space-between; gap: 60px;
+    position: relative; overflow: hidden;
+  }
+  .cta-inner::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(ellipse 50% 100% at 105% 50%, oklch(72% 0.135 82 / 0.06) 0%, transparent 100%),
+      radial-gradient(ellipse 30% 60% at -5% 80%, oklch(72% 0.135 82 / 0.04) 0%, transparent 100%);
+  }
+  .cta-text { z-index: 1; flex: 1; }
+  .cta-heading {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(20px, 2.4vw, 32px); font-weight: 700; letter-spacing: 0.04em;
+    color: var(--text); line-height: 1.2; margin-bottom: 10px;
+  }
+  .cta-sub-text {
+    font-size: 15px; color: var(--text-mid); line-height: 1.65; font-weight: 400;
+  }
+  .cta-actions { display: flex; gap: 12px; z-index: 1; flex-shrink: 0; }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--rule);
+    padding: 32px 72px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .footer-logo {
+    font-family: 'Cinzel', serif;
+    font-size: 13px; font-weight: 900; letter-spacing: 0.18em; color: var(--gold-dim);
+  }
+  .footer-copy { font-size: 11px; color: var(--text-low); letter-spacing: 0.04em; }
+
+  /* Noise overlay — bumped to add tactile grain to the dark surface */
+  body::after {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    opacity: 0.038;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ── RESPONSIVE — mobile full collapse ── */
+  @media (max-width: 767px) {
+    nav { padding: 18px 24px; }
+    .nav-links { display: none; }
+    .hero {
+      grid-template-columns: 1fr;
+      padding: 110px 24px 80px;
+      gap: 60px;
+    }
+    .hero-visual { display: none; }
+    .hero-scroll { left: 24px; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .btn-primary, .btn-ghost { width: 100%; text-align: center; }
+    .manifesto { padding: 40px 24px; flex-direction: column; gap: 24px; }
+    .services { padding: 64px 24px; }
+    .service-row { grid-template-columns: 48px 1fr; gap: 20px; padding: 28px 8px; }
+    .service-row-arrow { display: none; }
+    .wordmark-break { padding: 28px 0; }
+    .wordmark-break-text { font-size: clamp(40px, 14vw, 80px); }
+    .cta-section { padding: 0 24px 64px; }
+    .cta-inner { padding: 48px 32px; flex-direction: column; align-items: flex-start; }
+    .cta-actions { flex-direction: column; width: 100%; }
+    .cta-actions .btn-primary, .cta-actions .btn-ghost { width: 100%; text-align: center; }
+    footer { padding: 28px 24px; }
+  }
+
+  @media (min-width: 768px) and (max-width: 1023px) {
+    nav { padding: 20px 40px; }
+    .hero { padding: 120px 40px 80px; gap: 24px; }
+    .manifesto { padding: 48px 40px; }
+    .services { padding: 80px 40px; }
+    .service-row { padding: 36px 8px; }
+    .cta-section { padding: 0 40px 80px; }
+    footer { padding: 30px 40px; }
+  }
+
+  /* Marquee pauses on hover */
+  .marquee-band:hover .marquee-track { animation-play-state: paused; }
+
+  /* Reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    @keyframes letter-up { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fade-up   { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fade-down { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes row-in    { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes marquee   { from,to { transform: translateX(0); } }
+    @keyframes scroll-pulse { 0%,100% { opacity: 0.35; } 50% { opacity: 0.12; } }
+    .reveal, .reveal-row { transform: none; }
+    .btn-primary:hover, .btn-ghost:hover { transform: none; }
+    .btn-primary:active, .btn-ghost:active { transform: scale(0.99); }
+    .service-row::before { display: none; }
+    .service-row-arrow { opacity: 0.5; transform: none; }
+    .marquee-track { animation: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">SOVEREIGN</div>
+  <ul class="nav-links">
+    <li><a href="#">Services</a></li>
+    <li><a href="#">Work</a></li>
+    <li><a href="#">About</a></li>
+    <li><a href="#">Contact</a></li>
+  </ul>
+  <a href="#" class="nav-cta">Book a Call</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1 class="hero-wordmark" id="wordmark" aria-label="Sovereign"></h1>
+    <p class="hero-tagline">We Don't Build Websites. We Build Empires.</p>
+    <p class="hero-sub">
+      Websites that win clients. AI systems that cut costs. Applications that scale without breaking. Built for businesses that mean it.
+    </p>
+    <div class="hero-actions">
+      <button class="btn-primary"><span>Book a Call</span></button>
+      <button class="btn-ghost">See Our Work</button>
+    </div>
+  </div>
+
+  <!-- Atmospheric right-side wordmark — bleeds off edge at low opacity -->
+  <div class="hero-visual" aria-hidden="true">
+    <div class="hero-visual-word">SOVEREIGN</div>
+  </div>
+
+  <div class="hero-scroll" aria-hidden="true">
+    <span class="hero-scroll-label">Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+<!-- MARQUEE BAND (Upgrade A) -->
+<div class="marquee-band" aria-hidden="true">
+  <div class="marquee-track">
+    <span class="marquee-item">WEB DESIGN</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI INTEGRATION</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">FULL-STACK DEV</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">SOVEREIGN</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">WE BUILD EMPIRES</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">BOOK A CALL</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">WEB DESIGN</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">AI INTEGRATION</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">FULL-STACK DEV</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">SOVEREIGN</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">WE BUILD EMPIRES</span><span class="marquee-dot">·</span>
+    <span class="marquee-item">BOOK A CALL</span><span class="marquee-dot">·</span>
+  </div>
+</div>
+
+<!-- MANIFESTO BAND -->
+<div class="manifesto reveal">
+  <div class="manifesto-accent">
+    <div class="manifesto-dash"></div>
+    <div class="manifesto-dash"></div>
+  </div>
+  <p class="manifesto-text">
+    Most agencies build websites. <strong>We build competitive advantages</strong> — the digital infrastructure your competitors can't copy.
+  </p>
+</div>
+
+<!-- SERVICES -->
+<section class="services">
+  <div class="services-header reveal">
+    <h2 class="services-heading">Three Pillars.<br>One Standard.</h2>
+  </div>
+  <div class="services-list">
+    <div class="service-row reveal-row s1" id="row-1">
+      <div class="service-row-num">01</div>
+      <div class="service-row-body">
+        <div class="service-row-title">Web Design &amp; Development</div>
+        <div class="service-row-desc">Pixel-perfect websites that command attention. From landing pages to complex platforms, every pixel is intentional and every interaction deliberate.</div>
+      </div>
+      <div class="service-row-arrow">→</div>
+    </div>
+    <div class="service-row reveal-row s2" id="row-2">
+      <div class="service-row-num">02</div>
+      <div class="service-row-body">
+        <div class="service-row-title">AI Integration</div>
+        <div class="service-row-desc">Embed intelligence into your business. Custom chatbots, workflow automation, and AI-powered products that work while you sleep.</div>
+      </div>
+      <div class="service-row-arrow">→</div>
+    </div>
+    <div class="service-row reveal-row s3" id="row-3">
+      <div class="service-row-num">03</div>
+      <div class="service-row-body">
+        <div class="service-row-title">Full-Stack Development</div>
+        <div class="service-row-desc">End-to-end applications built to scale. From database architecture to polished UI, we own the full stack so nothing falls through the cracks.</div>
+      </div>
+      <div class="service-row-arrow">→</div>
+    </div>
+  </div>
+</section>
+
+<!-- FULL-BLEED WORDMARK BREAK (Upgrade B) -->
+<div class="wordmark-break reveal" aria-hidden="true">
+  <div class="wordmark-break-text">SOVEREIGN</div>
+</div>
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-inner reveal">
+    <div class="cta-text">
+      <div class="cta-heading">Ready to Build Something Sovereign?</div>
+      <div class="cta-sub-text">One conversation. No pitch. Just an honest assessment of what it takes.</div>
+    </div>
+    <div class="cta-actions">
+      <button class="btn-primary"><span>Book a Call</span></button>
+      <button class="btn-ghost">Send a Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">SOVEREIGN</div>
+  <div class="footer-copy">© 2026 Sovereign. All rights reserved.</div>
+</footer>
+
+<script>
+  // ── Letter-stagger animation on SOVEREIGN wordmark ──
+  const wordmark = document.getElementById('wordmark');
+  const letters = 'SOVEREIGN'.split('');
+  letters.forEach((char, i) => {
+    const span = document.createElement('span');
+    span.className = 'letter';
+    span.textContent = char;
+    span.style.animationDelay = `${0.3 + i * 0.045}s`;
+    wordmark.appendChild(span);
+  });
+
+  // ── Scroll reveal via IntersectionObserver ──
+  // rootMargin -100px: fires 100px before viewport edge (Emil Kowalski rule)
+  const observer = new IntersectionObserver(
+    (entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); }
+    }),
+    { rootMargin: '0px 0px -100px 0px', threshold: 0.05 }
+  );
+  document.querySelectorAll('.reveal, .reveal-row').forEach((el) => observer.observe(el));
+
+  // ── Spotlight effect on service rows ──
+  // Updates CSS custom properties for the radial gradient position
+  document.querySelectorAll('.service-row').forEach((row) => {
+    row.addEventListener('mousemove', (e) => {
+      const rect = row.getBoundingClientRect();
+      const x = ((e.clientX - rect.left) / rect.width) * 100;
+      const y = ((e.clientY - rect.top) / rect.height) * 100;
+      row.style.setProperty('--spotlight-x', `${x}%`);
+      row.style.setProperty('--spotlight-y', `${y}%`);
+    });
+  });
+</script>
+
+</body>
+</html>

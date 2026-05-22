@@ -1,0 +1,266 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500&display=swap');
+
+  .hybrid-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+    margin-top: 24px;
+  }
+
+  .h-card {
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: border-color 0.2s, transform 0.15s;
+  }
+  .h-card:hover { transform: translateY(-3px); }
+  .h-card.selected { border-color: #e8d48a; }
+
+  .h-preview {
+    height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+    gap: 5px;
+    padding: 20px;
+  }
+
+  .h-name {
+    font-size: 20px;
+    font-weight: 900;
+    letter-spacing: 0.06em;
+    z-index: 2;
+    text-align: center;
+  }
+
+  .h-sub {
+    font-size: 8px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .h-cta {
+    margin-top: 12px;
+    font-size: 9px;
+    padding: 5px 16px;
+    border-radius: 4px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    z-index: 2;
+  }
+
+  .h-services {
+    display: flex;
+    gap: 5px;
+    margin-top: 10px;
+    z-index: 2;
+  }
+  .h-svc {
+    font-size: 7px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+    z-index: 2;
+  }
+
+  /* OPTION A: Gold Crown + Dark Tech */
+  .gold-tech .h-preview {
+    background: #06050a;
+  }
+  .gold-tech .h-preview::before {
+    content: '';
+    position: absolute;
+    width: 280px; height: 280px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(180,140,60,0.2) 0%, transparent 60%);
+    top: -80px; left: 50%;
+    transform: translateX(-50%);
+  }
+  .gold-tech .h-preview::after {
+    content: '';
+    position: absolute;
+    width: 200px; height: 100px;
+    background: radial-gradient(ellipse, rgba(99,102,241,0.15) 0%, transparent 70%);
+    bottom: 0; right: -40px;
+  }
+  .gold-tech .h-name {
+    font-family: 'Cinzel', serif;
+    color: #e8d48a;
+    text-shadow: 0 0 40px rgba(180,140,60,0.4);
+  }
+  .gold-tech .h-sub { color: rgba(232,212,138,0.45); }
+  .gold-tech .h-cta {
+    background: transparent;
+    border: 1px solid rgba(232,212,138,0.45);
+    color: #e8d48a;
+    font-family: 'Cinzel', serif;
+  }
+  .gold-tech .h-svc {
+    border: 1px solid rgba(99,102,241,0.35);
+    color: rgba(139,92,246,0.8);
+    background: rgba(99,102,241,0.08);
+  }
+
+  /* OPTION B: Dark base, gold + electric accent */
+  .gold-electric .h-preview {
+    background: #070510;
+  }
+  .gold-electric .h-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 15% 100%, rgba(180,140,60,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 85% 0%, rgba(139,92,246,0.2) 0%, transparent 50%);
+  }
+  .gold-electric .h-name {
+    font-family: 'Space Grotesk', sans-serif;
+    background: linear-gradient(135deg, #e8d48a 0%, #c4a832 40%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 22px;
+  }
+  .gold-electric .h-sub { color: rgba(255,255,255,0.3); }
+  .gold-electric .h-cta {
+    background: linear-gradient(135deg, rgba(180,140,60,0.3), rgba(139,92,246,0.3));
+    border: 1px solid rgba(180,140,60,0.4);
+    color: #e8d48a;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+  .gold-electric .h-svc {
+    border: 1px solid rgba(180,140,60,0.25);
+    color: rgba(232,212,138,0.65);
+    background: rgba(180,140,60,0.06);
+  }
+
+  /* OPTION C: Steel dark, gold accents only on key elements */
+  .steel-gold .h-preview {
+    background: #080c10;
+  }
+  .steel-gold .h-preview::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(20,40,70,0.8) 0%, transparent 60%),
+      radial-gradient(ellipse at 50% 120%, rgba(180,140,60,0.15) 0%, transparent 50%);
+  }
+  .steel-gold .h-name {
+    font-family: 'Space Grotesk', sans-serif;
+    color: #ffffff;
+    letter-spacing: 0.12em;
+    font-size: 19px;
+  }
+  .steel-gold .h-sub { color: rgba(232,212,138,0.6); letter-spacing: 0.3em; }
+  .steel-gold .h-cta {
+    background: linear-gradient(135deg, #c4a832, #e8d48a);
+    color: #080c10;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+  }
+  .steel-gold .h-svc {
+    border: 1px solid rgba(255,255,255,0.12);
+    color: rgba(255,255,255,0.5);
+    background: rgba(255,255,255,0.04);
+  }
+
+  .h-info {
+    background: rgba(255,255,255,0.03);
+    border-top: 1px solid rgba(255,255,255,0.06);
+    padding: 14px 16px;
+  }
+
+  .h-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.85);
+    margin-bottom: 4px;
+  }
+
+  .h-desc {
+    font-size: 11px;
+    color: rgba(255,255,255,0.4);
+    line-height: 1.55;
+  }
+
+  .rec-badge {
+    display: inline-block;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: rgba(232,212,138,0.15);
+    border: 1px solid rgba(232,212,138,0.35);
+    color: rgba(232,212,138,0.9);
+    margin-bottom: 6px;
+  }
+</style>
+
+<h2>Gold meets tech — three blends</h2>
+<p class="subtitle">All three keep the gold. The question is how much tech energy lives alongside it.</p>
+
+<div class="hybrid-grid">
+
+  <div class="h-card gold-tech" data-choice="gold-tech" onclick="toggleSelect(this)">
+    <div class="h-preview">
+      <div class="h-name">SOVEREIGN</div>
+      <div class="h-sub">Digital Studio</div>
+      <div class="h-cta">Engage Us</div>
+      <div class="h-services">
+        <span class="h-svc">Web</span>
+        <span class="h-svc">AI</span>
+        <span class="h-svc">Dev</span>
+      </div>
+    </div>
+    <div class="h-info">
+      <div class="h-title">Gold Crown</div>
+      <div class="h-desc">Gold is king, purple tech hints sit quietly beneath. Royal first, tech second.</div>
+    </div>
+  </div>
+
+  <div class="h-card gold-electric" data-choice="gold-electric" onclick="toggleSelect(this)">
+    <div class="h-preview">
+      <div class="h-name">SOVEREIGN</div>
+      <div class="h-sub">Digital Studio</div>
+      <div class="h-cta">Get Started</div>
+      <div class="h-services">
+        <span class="h-svc">Web</span>
+        <span class="h-svc">AI</span>
+        <span class="h-svc">Dev</span>
+      </div>
+    </div>
+    <div class="h-info">
+      <div class="rec-badge">★ My pick</div>
+      <div class="h-title">Gold → Electric</div>
+      <div class="h-desc">Name fades from gold into violet. Royalty evolving into the future — the gradient tells the story.</div>
+    </div>
+  </div>
+
+  <div class="h-card steel-gold" data-choice="steel-gold" onclick="toggleSelect(this)">
+    <div class="h-preview">
+      <div class="h-name">SOVEREIGN</div>
+      <div class="h-sub">Digital Studio</div>
+      <div class="h-cta">Work With Us</div>
+      <div class="h-services">
+        <span class="h-svc">Web</span>
+        <span class="h-svc">AI</span>
+        <span class="h-svc">Dev</span>
+      </div>
+    </div>
+    <div class="h-info">
+      <div class="h-title">Steel & Gold</div>
+      <div class="h-desc">Cold steel-blue dark base, gold reserved for CTAs and accents only. Maximum authority.</div>
+    </div>
+  </div>
+
+</div>

@@ -1,0 +1,290 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap');
+
+  .layout-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .l-card {
+    border-radius: 14px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid rgba(255,255,255,0.07);
+    transition: border-color 0.2s, transform 0.15s;
+    background: #0a0812;
+  }
+  .l-card:hover { transform: translateY(-3px); border-color: rgba(232,212,138,0.3); }
+  .l-card.selected { border-color: #e8d48a; }
+
+  .l-preview {
+    height: 260px;
+    background: #070510;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Shared wireframe styles */
+  .w-nav {
+    height: 18px;
+    background: rgba(255,255,255,0.04);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    gap: 6px;
+    flex-shrink: 0;
+  }
+  .w-logo { width: 40px; height: 5px; background: linear-gradient(90deg, #e8d48a, #a78bfa); border-radius: 2px; }
+  .w-nav-links { display: flex; gap: 5px; margin-left: auto; }
+  .w-nav-link { width: 18px; height: 3px; background: rgba(255,255,255,0.15); border-radius: 1px; }
+  .w-cta-pill { width: 28px; height: 8px; background: linear-gradient(135deg, rgba(180,140,60,0.5), rgba(139,92,246,0.5)); border-radius: 4px; margin-left: 5px; }
+
+  .w-section { padding: 10px; flex-shrink: 0; }
+  .w-label { font-size: 6px; letter-spacing: 0.15em; text-transform: uppercase; color: rgba(232,212,138,0.4); margin-bottom: 4px; }
+  .w-headline { height: 7px; background: rgba(255,255,255,0.2); border-radius: 2px; margin-bottom: 3px; }
+  .w-headline.short { width: 60%; }
+  .w-headline.med { width: 80%; }
+  .w-headline.full { width: 100%; }
+  .w-body { height: 4px; background: rgba(255,255,255,0.08); border-radius: 1px; margin-bottom: 2px; }
+  .w-body.short { width: 55%; }
+  .w-body.med { width: 75%; }
+  .w-cta-row { display: flex; gap: 6px; margin-top: 8px; }
+  .w-btn { height: 10px; border-radius: 3px; }
+  .w-btn.primary { width: 50px; background: linear-gradient(135deg, rgba(180,140,60,0.6), rgba(139,92,246,0.6)); }
+  .w-btn.secondary { width: 36px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.12); }
+
+  .w-cards-row { display: flex; gap: 5px; padding: 0 10px 10px; }
+  .w-service-card { flex: 1; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; padding: 6px; }
+  .w-svc-icon { width: 10px; height: 10px; border-radius: 2px; background: linear-gradient(135deg, rgba(180,140,60,0.4), rgba(139,92,246,0.4)); margin-bottom: 4px; }
+  .w-svc-title { height: 4px; background: rgba(255,255,255,0.2); border-radius: 1px; margin-bottom: 3px; }
+  .w-svc-body { height: 3px; background: rgba(255,255,255,0.07); border-radius: 1px; }
+  .w-svc-body2 { height: 3px; width: 70%; background: rgba(255,255,255,0.07); border-radius: 1px; margin-top: 2px; }
+
+  .w-divider { height: 1px; background: rgba(255,255,255,0.05); margin: 0 10px; }
+
+  .w-stats-row { display: flex; gap: 5px; padding: 8px 10px; }
+  .w-stat { flex: 1; text-align: center; }
+  .w-stat-num { height: 8px; background: linear-gradient(90deg, rgba(180,140,60,0.5), rgba(139,92,246,0.5)); border-radius: 2px; margin-bottom: 3px; }
+  .w-stat-lbl { height: 3px; background: rgba(255,255,255,0.1); border-radius: 1px; }
+
+  .w-two-col { display: flex; gap: 8px; padding: 8px 10px; }
+  .w-col-text { flex: 1.2; }
+  .w-col-visual { flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 4px; min-height: 40px; display: flex; align-items: center; justify-content: center; }
+  .w-col-visual-inner { width: 30px; height: 30px; border-radius: 50%; background: radial-gradient(circle, rgba(180,140,60,0.3), rgba(139,92,246,0.2)); }
+
+  .w-process-row { display: flex; gap: 4px; padding: 0 10px 8px; }
+  .w-step { flex: 1; }
+  .w-step-num { font-size: 7px; color: rgba(232,212,138,0.5); font-family: 'Cinzel', serif; margin-bottom: 2px; }
+  .w-step-bar { height: 3px; background: rgba(255,255,255,0.08); border-radius: 1px; margin-bottom: 2px; }
+  .w-step-body { height: 2px; width: 80%; background: rgba(255,255,255,0.05); border-radius: 1px; }
+  .w-step-conn { width: 8px; height: 1px; background: rgba(232,212,138,0.2); align-self: center; }
+
+  .w-cta-banner { background: linear-gradient(135deg, rgba(180,140,60,0.08), rgba(139,92,246,0.12)); border-top: 1px solid rgba(255,255,255,0.05); padding: 8px 10px; display: flex; align-items: center; justify-content: space-between; margin-top: auto; }
+  .w-cta-text { }
+  .w-cta-headline { height: 5px; width: 70px; background: rgba(255,255,255,0.2); border-radius: 1px; margin-bottom: 3px; }
+  .w-cta-sub { height: 3px; width: 50px; background: rgba(255,255,255,0.08); border-radius: 1px; }
+  .w-cta-btn { height: 12px; width: 36px; background: linear-gradient(135deg, rgba(180,140,60,0.7), rgba(139,92,246,0.7)); border-radius: 3px; }
+
+  .glow-top {
+    position: absolute;
+    width: 120px; height: 60px;
+    background: radial-gradient(ellipse, rgba(139,92,246,0.25) 0%, transparent 70%);
+    top: 0; right: 10px;
+    pointer-events: none;
+  }
+  .glow-bottom {
+    position: absolute;
+    width: 100px; height: 50px;
+    background: radial-gradient(ellipse, rgba(180,140,60,0.2) 0%, transparent 70%);
+    bottom: 30px; left: 10px;
+    pointer-events: none;
+  }
+
+  .l-info { padding: 14px 16px; border-top: 1px solid rgba(255,255,255,0.06); }
+  .l-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.85); margin-bottom: 4px; }
+  .l-desc { font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.55; }
+  .rec-badge {
+    display: inline-block; font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 2px 7px; border-radius: 20px;
+    background: rgba(232,212,138,0.12); border: 1px solid rgba(232,212,138,0.3);
+    color: rgba(232,212,138,0.85); margin-bottom: 6px;
+  }
+
+  .sections-list {
+    display: flex; flex-direction: column; gap: 2px; padding: 0 10px 8px;
+  }
+  .s-row {
+    font-size: 6px; letter-spacing: 0.1em; text-transform: uppercase;
+    color: rgba(255,255,255,0.25); display: flex; align-items: center; gap: 4px;
+  }
+  .s-dot { width: 3px; height: 3px; border-radius: 50%; background: rgba(232,212,138,0.4); flex-shrink: 0; }
+</style>
+
+<h2>How should the page be structured?</h2>
+<p class="subtitle">Three section orderings — same brand, different story arc. Click to choose.</p>
+
+<div class="layout-grid">
+
+  <!-- LAYOUT A: Impact First -->
+  <div class="l-card" data-choice="impact-first" onclick="toggleSelect(this)">
+    <div class="l-preview">
+      <div class="glow-top"></div>
+      <div class="glow-bottom"></div>
+      <div class="w-nav">
+        <div class="w-logo"></div>
+        <div class="w-nav-links">
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+        </div>
+        <div class="w-cta-pill"></div>
+      </div>
+      <!-- Hero -->
+      <div class="w-section">
+        <div class="w-label">Hero</div>
+        <div class="w-headline full"></div>
+        <div class="w-headline med"></div>
+        <div class="w-body med"></div>
+        <div class="w-body short"></div>
+        <div class="w-cta-row">
+          <div class="w-btn primary"></div>
+          <div class="w-btn secondary"></div>
+        </div>
+      </div>
+      <!-- Stats bar -->
+      <div class="w-divider"></div>
+      <div class="w-stats-row">
+        <div class="w-stat"><div class="w-stat-num"></div><div class="w-stat-lbl"></div></div>
+        <div class="w-stat"><div class="w-stat-num"></div><div class="w-stat-lbl"></div></div>
+        <div class="w-stat"><div class="w-stat-num"></div><div class="w-stat-lbl"></div></div>
+      </div>
+      <!-- Services -->
+      <div class="w-divider"></div>
+      <div class="w-section" style="padding-bottom:6px">
+        <div class="w-label">Services</div>
+      </div>
+      <div class="w-cards-row">
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div><div class="w-svc-body"></div><div class="w-svc-body2"></div></div>
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div><div class="w-svc-body"></div><div class="w-svc-body2"></div></div>
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div><div class="w-svc-body"></div><div class="w-svc-body2"></div></div>
+      </div>
+      <div class="w-cta-banner" style="margin-top:0">
+        <div class="w-cta-text"><div class="w-cta-headline"></div><div class="w-cta-sub"></div></div>
+        <div class="w-cta-btn"></div>
+      </div>
+    </div>
+    <div class="l-info">
+      <div class="rec-badge">★ My pick</div>
+      <div class="l-title">Impact First</div>
+      <div class="l-desc">Hero → Social proof stats → Services → Book a Call. Lead with boldness, back it up fast.</div>
+    </div>
+  </div>
+
+  <!-- LAYOUT B: Story Arc -->
+  <div class="l-card" data-choice="story-arc" onclick="toggleSelect(this)">
+    <div class="l-preview">
+      <div class="glow-top"></div>
+      <div class="glow-bottom"></div>
+      <div class="w-nav">
+        <div class="w-logo"></div>
+        <div class="w-nav-links">
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+        </div>
+        <div class="w-cta-pill"></div>
+      </div>
+      <!-- Hero -->
+      <div class="w-section">
+        <div class="w-label">Hero</div>
+        <div class="w-headline full"></div>
+        <div class="w-headline short"></div>
+        <div class="w-cta-row"><div class="w-btn primary"></div></div>
+      </div>
+      <div class="w-divider"></div>
+      <!-- Services -->
+      <div class="w-section" style="padding-bottom:5px">
+        <div class="w-label">Services (3 cards)</div>
+      </div>
+      <div class="w-cards-row">
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div></div>
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div></div>
+        <div class="w-service-card"><div class="w-svc-icon"></div><div class="w-svc-title"></div></div>
+      </div>
+      <div class="w-divider"></div>
+      <!-- Why us / two-col -->
+      <div class="w-section" style="padding-bottom:4px"><div class="w-label">Why Sovereign</div></div>
+      <div class="w-two-col">
+        <div class="w-col-text">
+          <div class="w-headline short"></div>
+          <div class="w-body med"></div>
+          <div class="w-body short"></div>
+        </div>
+        <div class="w-col-visual"><div class="w-col-visual-inner"></div></div>
+      </div>
+      <!-- Process -->
+      <div class="w-divider"></div>
+      <div class="w-section" style="padding-bottom:4px"><div class="w-label">Process</div></div>
+      <div class="w-process-row">
+        <div class="w-step"><div class="w-step-num">01</div><div class="w-step-bar"></div><div class="w-step-body"></div></div>
+        <div class="w-step"><div class="w-step-num">02</div><div class="w-step-bar"></div><div class="w-step-body"></div></div>
+        <div class="w-step"><div class="w-step-num">03</div><div class="w-step-bar"></div><div class="w-step-body"></div></div>
+      </div>
+      <div class="w-cta-banner">
+        <div class="w-cta-text"><div class="w-cta-headline"></div><div class="w-cta-sub"></div></div>
+        <div class="w-cta-btn"></div>
+      </div>
+    </div>
+    <div class="l-info">
+      <div class="l-title">Story Arc</div>
+      <div class="l-desc">Hero → Services → Why Us → Process → Book a Call. Builds the case before asking for action.</div>
+    </div>
+  </div>
+
+  <!-- LAYOUT C: Full Coverage -->
+  <div class="l-card" data-choice="full-coverage" onclick="toggleSelect(this)">
+    <div class="l-preview">
+      <div class="glow-top"></div>
+      <div class="glow-bottom"></div>
+      <div class="w-nav">
+        <div class="w-logo"></div>
+        <div class="w-nav-links">
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+          <div class="w-nav-link"></div>
+        </div>
+        <div class="w-cta-pill"></div>
+      </div>
+      <div class="w-section" style="padding-bottom:5px">
+        <div class="w-label">Hero</div>
+        <div class="w-headline med"></div>
+        <div class="w-headline short"></div>
+        <div class="w-cta-row"><div class="w-btn primary"></div><div class="w-btn secondary"></div></div>
+      </div>
+      <div class="w-divider"></div>
+      <div class="sections-list">
+        <div class="s-row"><div class="s-dot"></div>Stats / Social proof bar</div>
+        <div class="s-row"><div class="s-dot"></div>Services — 3 cards</div>
+        <div class="s-row"><div class="s-dot"></div>Why Sovereign — text + visual</div>
+        <div class="s-row"><div class="s-dot"></div>Process — numbered steps</div>
+        <div class="s-row"><div class="s-dot"></div>Testimonials</div>
+        <div class="s-row"><div class="s-dot"></div>FAQ</div>
+      </div>
+      <div class="w-cta-banner">
+        <div class="w-cta-text"><div class="w-cta-headline"></div><div class="w-cta-sub"></div></div>
+        <div class="w-cta-btn"></div>
+      </div>
+    </div>
+    <div class="l-info">
+      <div class="l-title">Full Coverage</div>
+      <div class="l-desc">Everything: Hero → Stats → Services → Why Us → Process → Testimonials → FAQ → CTA. Comprehensive but longer.</div>
+    </div>
+  </div>
+
+</div>

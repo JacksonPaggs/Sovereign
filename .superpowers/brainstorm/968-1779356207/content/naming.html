@@ -1,0 +1,156 @@
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Inter:wght@400;500&display=swap');
+
+  .name-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .name-card {
+    background: linear-gradient(135deg, #0f0f14 0%, #1a1a24 100%);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 32px 24px;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .name-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at top left, rgba(180,140,60,0.12) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .name-card:hover {
+    border-color: rgba(180,140,60,0.4);
+    transform: translateY(-2px);
+  }
+
+  .name-card.selected {
+    border-color: rgba(180,140,60,0.9);
+    background: linear-gradient(135deg, #13120a 0%, #1e1c10 100%);
+  }
+
+  .card-name {
+    font-family: 'Cinzel', Georgia, serif;
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    color: #e8d48a;
+    margin-bottom: 8px;
+  }
+
+  .card-tagline {
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 14px;
+  }
+
+  .card-desc {
+    font-size: 13px;
+    color: rgba(255,255,255,0.6);
+    line-height: 1.6;
+  }
+
+  .card-vibe {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    margin-top: 14px;
+  }
+
+  .vibe-tag {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 20px;
+    border: 1px solid rgba(180,140,60,0.3);
+    color: rgba(180,140,60,0.7);
+  }
+
+  .crown {
+    font-size: 11px;
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    opacity: 0.3;
+  }
+
+  .recommend-badge {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 20px;
+    background: rgba(180,140,60,0.2);
+    border: 1px solid rgba(180,140,60,0.5);
+    color: rgba(180,140,60,0.9);
+  }
+</style>
+
+<h2>What should we call you?</h2>
+<p class="subtitle">Each name is styled to show how it feels at scale. Click your favourite.</p>
+
+<div class="name-grid">
+
+  <div class="name-card" data-choice="jacknjones" onclick="toggleSelect(this)">
+    <span class="crown">♛</span>
+    <div class="card-name">JackNJones</div>
+    <div class="card-tagline">Web &amp; AI Studio</div>
+    <div class="card-desc">Personal and memorable. The "&amp;N" gives it rhythm — like a brand that's already been somewhere.</div>
+    <div class="card-vibe">
+      <span class="vibe-tag">Memorable</span>
+      <span class="vibe-tag">Personal</span>
+      <span class="vibe-tag">Punchy</span>
+    </div>
+  </div>
+
+  <div class="name-card" data-choice="regnant" onclick="toggleSelect(this)">
+    <span class="recommend-badge">★ My pick</span>
+    <div class="card-name">Regnant</div>
+    <div class="card-tagline">Digital &amp; AI</div>
+    <div class="card-desc">Latin for "reigning / ruling." One word, zero ambiguity. Sounds like power before you even know what it means.</div>
+    <div class="card-vibe">
+      <span class="vibe-tag">Dominant</span>
+      <span class="vibe-tag">Latin roots</span>
+      <span class="vibe-tag">Unforgettable</span>
+    </div>
+  </div>
+
+  <div class="name-card" data-choice="sovereign" onclick="toggleSelect(this)">
+    <span class="crown">♛</span>
+    <div class="card-name">Sovereign</div>
+    <div class="card-tagline">Studios</div>
+    <div class="card-desc">Immediate royalty association. Every client feels like they're hiring the authority in the room.</div>
+    <div class="card-vibe">
+      <span class="vibe-tag">Royalty</span>
+      <span class="vibe-tag">Authority</span>
+      <span class="vibe-tag">Premium</span>
+    </div>
+  </div>
+
+  <div class="name-card" data-choice="imperion" onclick="toggleSelect(this)">
+    <span class="crown">♛</span>
+    <div class="card-name">Imperion</div>
+    <div class="card-tagline">Digital &amp; AI</div>
+    <div class="card-desc">Invented word from "imperial" — sounds like a tech empire. Feels futuristic and commanding at the same time.</div>
+    <div class="card-vibe">
+      <span class="vibe-tag">Coined word</span>
+      <span class="vibe-tag">Tech-forward</span>
+      <span class="vibe-tag">Empire energy</span>
+    </div>
+  </div>
+
+</div>

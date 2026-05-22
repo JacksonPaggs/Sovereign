@@ -55,6 +55,21 @@ createServer(async (req, res) => {
     return;
   }
 
+  if (path === '/download/gameplan') {
+    try {
+      const data = await readFile(join(ROOT, 'docs/Sovereign - Jackson & Dawson Game Plan.md'));
+      res.writeHead(200, {
+        'Content-Type': 'text/markdown',
+        'Content-Disposition': 'attachment; filename="Sovereign - Jackson & Dawson Game Plan.md"',
+      });
+      res.end(data);
+    } catch {
+      res.writeHead(404);
+      res.end('Not found');
+    }
+    return;
+  }
+
   if (path === '/') path = '/index.html';
   const file = join(ROOT, path);
   try {
