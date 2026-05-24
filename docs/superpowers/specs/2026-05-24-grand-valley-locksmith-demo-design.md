@@ -86,7 +86,7 @@ Replace the client's generic WordPress site with a conversion-focused, highly in
 - Navy background, amber atmospheric glow
 - Headline: *"Ready to Work With a Locksmith You Can Actually Trust?"*
 - Subtext: *"No hidden fees. No runaround. Just fast, honest service."*
-- Two buttons: "Call Now" (amber, `tel:9702010403`) + "Send a Message" (ghost, `sms:9702010403`)
+- Two buttons: "Call Now" (amber, `tel:9702010403`) + "Send a Message" (ghost, `mailto:info@grandvalleylocksmith.com`) — NOTE: never `sms:` on pages shown on desktop
 
 ### 8. Footer
 - Dark navy, minimal
