@@ -160,7 +160,7 @@
     /* === HERO === */
     .hero {
       position: relative;
-      min-height: 100vh;
+      min-height: 140vh;
       background: var(--navy);
       display: flex;
       align-items: center;
@@ -196,7 +196,7 @@
       display: grid;
       grid-template-columns: 1fr 0.75fr;
       gap: 60px;
-      align-items: center;
+      align-items: start;
       width: 100%;
     }
     .hero-badge {
@@ -238,6 +238,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      position: sticky;
+      top: 30vh;
     }
 
     /* === LOCK === */
@@ -552,7 +554,7 @@
       .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; padding-top: 100px; }
       .hero-sub { margin: 0 auto 44px; }
       .hero-buttons { justify-content: center; }
-      .hero-visual { order: -1; }
+      .hero-visual { order: -1; position: static; }
       .lock-wrapper { width: 200px; height: 240px; }
       .lock-svg { width: 160px; }
       .emergency-inner { grid-template-columns: 1fr; gap: 48px; }
@@ -889,7 +891,7 @@
   let ticking = false;
 
   function updateLock() {
-    const progress = Math.min(window.scrollY / 320, 1);
+    const progress = Math.min(window.scrollY / 520, 1);
 
     // Shackle rises 0 → -30px
     lockShackle.style.transform = `translateY(${-(progress * 30)}px)`;
