@@ -401,6 +401,19 @@
       letter-spacing: 0.04em;
     }
     .service-card p { color: var(--text-mid); font-size: 0.95rem; line-height: 1.68; }
+    .service-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 24px;
+      color: var(--amber);
+      font-weight: 700;
+      font-size: 0.88rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      transition: color 200ms, gap 200ms var(--ease-spring);
+    }
+    .service-cta:hover { color: var(--amber-light); gap: 10px; }
 
     /* === EMERGENCY === */
     .emergency {
@@ -503,6 +516,53 @@
       color: var(--text);
     }
 
+    /* === TESTIMONIALS === */
+    .testimonials { background: var(--base); padding: 112px 0; }
+    .testimonials-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+    .testimonials-header {
+      margin-bottom: 64px;
+    }
+    .testimonials-header h2 {
+      font-size: clamp(2.6rem, 5vw, 4.2rem);
+      color: var(--navy);
+      line-height: 1.1;
+      margin-top: 12px;
+    }
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .testimonial-card {
+      background: var(--base-2);
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      padding: 36px 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: transform 300ms var(--ease-spring), box-shadow 300ms var(--ease-spring);
+    }
+    .testimonial-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(26,35,50,0.08);
+    }
+    .testimonial-stars { color: var(--amber); font-size: 1.1rem; letter-spacing: 2px; }
+    .testimonial-card > p {
+      color: var(--text);
+      font-size: 1rem;
+      line-height: 1.72;
+      font-style: italic;
+      flex: 1;
+    }
+    .testimonial-author { display: flex; flex-direction: column; gap: 3px; border-top: 1px solid var(--rule); padding-top: 20px; }
+    .testimonial-author strong { font-size: 0.92rem; color: var(--navy); font-weight: 700; }
+    .testimonial-author span { font-size: 0.8rem; color: var(--text-mid); }
+
     /* === CTA BANNER === */
     .cta-banner {
       background: var(--navy);
@@ -579,6 +639,7 @@
       .nav-phone { display: none; }
       .nav-cta { display: none; }
       .services-grid { grid-template-columns: 1fr; }
+      .testimonials-grid { grid-template-columns: 1fr; }
       .trust-inner { grid-template-columns: 1fr; gap: 32px; padding: 48px 32px; }
       .trust-divider { display: none; }
       .trust-inner { display: flex; flex-direction: column; align-items: center; }
@@ -716,12 +777,12 @@
 <section class="trust-bar" id="trustBar">
   <div class="trust-inner">
     <div class="trust-item">
-      <span class="trust-number" data-target="15" data-suffix="+">0+</span>
+      <span class="trust-number" data-target="15" data-suffix="+">15+</span>
       <span class="trust-label">Years of Local Service</span>
     </div>
     <div class="trust-divider"></div>
     <div class="trust-item">
-      <span class="trust-number" data-target="5000" data-suffix="+">0+</span>
+      <span class="trust-number" data-target="5000" data-suffix="+">5,000+</span>
       <span class="trust-label">Jobs Completed</span>
     </div>
     <div class="trust-divider"></div>
@@ -754,6 +815,7 @@
         </div>
         <h3>Residential</h3>
         <p>Home lockouts, re-keys, lock upgrades, and deadbolt installation. We keep your family safe and secure.</p>
+        <a href="tel:9702010403" class="service-cta">Call Now →</a>
       </div>
 
       <div class="service-card reveal" style="transition-delay: 100ms;">
@@ -769,6 +831,7 @@
         </div>
         <h3>Commercial</h3>
         <p>Master key systems, access control, and high-security locks for offices, storefronts, and properties.</p>
+        <a href="tel:9702010403" class="service-cta">Call Now →</a>
       </div>
 
       <div class="service-card reveal" style="transition-delay: 200ms;">
@@ -785,6 +848,7 @@
         </div>
         <h3>Automotive</h3>
         <p>Locked out of your vehicle? Lost your keys? We handle car lockouts and key fob programming.</p>
+        <a href="tel:9702010403" class="service-cta">Call Now →</a>
       </div>
 
     </div>
@@ -842,6 +906,46 @@
   </div>
 </section>
 
+<!-- ===================== TESTIMONIALS ===================== -->
+<section class="testimonials" id="testimonials">
+  <div class="testimonials-inner">
+    <div class="testimonials-header reveal">
+      <p class="section-label">What Customers Say</p>
+      <h2>Trusted Across<br>the Western Slope</h2>
+    </div>
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card reveal">
+        <div class="testimonial-stars">★★★★★</div>
+        <p>"Called at 10pm locked out of my house. Had someone there in 20 minutes. Fair price, no runaround. These guys are the real deal."</p>
+        <div class="testimonial-author">
+          <strong>Sarah M.</strong>
+          <span>Grand Junction, CO</span>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal" style="transition-delay: 100ms;">
+        <div class="testimonial-stars">★★★★★</div>
+        <p>"Re-keyed our entire office after a staff change. Professional, fast, and half the price we expected. Will use them for every property we manage."</p>
+        <div class="testimonial-author">
+          <strong>Mark T.</strong>
+          <span>Fruita, CO — Property Manager</span>
+        </div>
+      </div>
+
+      <div class="testimonial-card reveal" style="transition-delay: 200ms;">
+        <div class="testimonial-stars">★★★★★</div>
+        <p>"Lost my keys in a parking lot. They were there in 30 minutes and had me back in my car the same afternoon. Saved my whole day."</p>
+        <div class="testimonial-author">
+          <strong>James R.</strong>
+          <span>Palisade, CO</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
 <!-- ===================== CTA BANNER ===================== -->
 <section class="cta-banner" id="contact">
   <div class="cta-glow"></div>
@@ -850,7 +954,7 @@
     <p>No hidden fees. No runaround. Just fast, honest service from people who live here too.</p>
     <div class="cta-buttons">
       <a href="tel:9702010403" class="btn btn-amber btn-magnetic btn-lg">Call Now — (970) 201-0403</a>
-      <a href="sms:9702010403" class="btn btn-ghost btn-lg">Send a Message</a>
+      <a href="mailto:info@grandvalleylocksmith.com" class="btn btn-ghost btn-lg">Send a Message</a>
     </div>
   </div>
 </section>
