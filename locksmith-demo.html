@@ -160,15 +160,22 @@
     /* === HERO === */
     .hero {
       position: relative;
-      min-height: 140vh;
+      /* Extra scroll room so the pinned section can animate fully */
+      height: calc(100vh + 600px);
       background: var(--navy);
-      display: flex;
-      align-items: center;
-      overflow: hidden;
     }
     .hero-dots {
+      position: sticky;
+      top: 0;
+      height: 0;
+      overflow: visible;
+    }
+    .hero-dots::after {
+      content: '';
       position: absolute;
-      inset: 0;
+      inset: 0 0 0 0;
+      height: 100vh;
+      width: 100vw;
       background-image: radial-gradient(circle, rgba(255,255,255,0.055) 1px, transparent 1px);
       background-size: 28px 28px;
       pointer-events: none;
@@ -187,17 +194,23 @@
       background: radial-gradient(circle, rgba(255,255,255,0.025) 0%, transparent 65%);
       pointer-events: none;
     }
+    /* Pin the entire hero layout while lock animates */
     .hero-inner {
-      position: relative;
+      position: sticky;
+      top: 0;
       z-index: 1;
+      height: 100vh;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 120px 32px 80px;
+      padding: 0 32px;
       display: grid;
       grid-template-columns: 1fr 0.75fr;
       gap: 60px;
-      align-items: start;
+      align-items: center;
       width: 100%;
+    }
+    .hero-content {
+      padding-top: 48px;
     }
     .hero-badge {
       display: inline-block;
@@ -238,8 +251,6 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      position: sticky;
-      top: 30vh;
     }
 
     /* === LOCK === */
@@ -551,10 +562,11 @@
 
     /* === RESPONSIVE === */
     @media (max-width: 900px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 48px; text-align: center; padding-top: 100px; }
+      .hero-inner { grid-template-columns: 1fr; gap: 32px; text-align: center; align-content: center; }
+      .hero-content { padding-top: 80px; }
       .hero-sub { margin: 0 auto 44px; }
       .hero-buttons { justify-content: center; }
-      .hero-visual { order: -1; position: static; }
+      .hero-visual { order: -1; }
       .lock-wrapper { width: 200px; height: 240px; }
       .lock-svg { width: 160px; }
       .emergency-inner { grid-template-columns: 1fr; gap: 48px; }
