@@ -7,6 +7,14 @@
 <meta name="description" content="Websites that win clients. AI systems that cut costs. Applications that scale without breaking. Book a discovery call today.">
 <link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
 <script src="https://assets.calendly.com/assets/external/widget.js" async></script>
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.169.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.169.0/examples/jsm/"
+  }
+}
+</script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&display=swap');
 
@@ -134,37 +142,67 @@
   .nav-cta:hover { color: var(--ink); border-color: var(--gold); }
   .nav-cta:active { transform: scale(0.97); transition-duration: 100ms; }
 
-  /* ── HERO ── */
-  .hero {
-    min-height: 100dvh;
-    display: grid;
-    grid-template-columns: 1fr 0.7fr;
-    align-items: center;
-    padding: 130px 72px 90px;
-    position: relative;
+  /* ── HERO / SCROLL STORY ── */
+  #pin-wrap { position: relative; height: 620vh; }
+  #scene-host {
+    position: sticky; top: 0; height: 100vh; width: 100%;
     overflow: hidden;
-    gap: 40px;
+    display: flex; align-items: center; justify-content: center;
   }
-  .hero::before {
+  #scene-host canvas { position: absolute; inset: 0; }
+
+  .act {
+    position: absolute; left: 0; right: 0; top: 50%;
+    transform: translateY(-50%);
+    text-align: center; padding: 40px 24px;
+    opacity: 0; pointer-events: none; z-index: 2;
+  }
+  .act::before {
     content: '';
-    position: absolute; inset: 0; pointer-events: none;
-    background:
-      radial-gradient(ellipse 60% 65% at 105% 10%, oklch(72% 0.135 82 / 0.14) 0%, transparent 70%),
-      radial-gradient(ellipse 50% 55% at -5%  90%, oklch(72% 0.135 82 / 0.16) 0%, transparent 65%),
-      radial-gradient(ellipse 75% 70% at 85%  40%, oklch(56% 0.16 280 / 0.10) 0%, transparent 60%),
-      radial-gradient(ellipse 45% 45% at 30%  20%, oklch(56% 0.16 280 / 0.06) 0%, transparent 70%);
-    animation: fade-in 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) both;
+    position: absolute; inset: -20px 0;
+    background: linear-gradient(to bottom,
+      transparent 0%, oklch(8% 0.013 75 / 0.62) 18%, oklch(8% 0.013 75 / 0.68) 82%, transparent 100%);
+    z-index: -1;
   }
-  .hero-content { z-index: 1; }
+  .act-eyebrow {
+    font-size: 10px; letter-spacing: 0.32em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 18px;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9), 0 0 4px rgba(0,0,0,0.8);
+  }
+  .act-line {
+    font-family: 'Cinzel', serif; font-weight: 700;
+    font-size: clamp(24px, 4.2vw, 56px); letter-spacing: 0.02em; line-height: 1.15;
+    color: var(--text);
+    max-width: 22ch; margin: 0 auto;
+    text-shadow: 0 4px 24px rgba(0,0,0,0.9), 0 2px 6px rgba(0,0,0,0.85);
+  }
+  .act-line em { font-style: normal; color: var(--gold); }
+  .act-sub {
+    font-size: clamp(15px, 1.6vw, 20px); font-weight: 400; line-height: 1.7;
+    color: var(--text); max-width: 46ch; margin: 0 auto;
+    text-shadow: 0 3px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.85);
+  }
+  .act-list {
+    display: flex; flex-direction: column; gap: 14px; align-items: center;
+    max-width: 30ch; margin: 0 auto;
+  }
+  .act-list-item {
+    font-family: 'Cinzel', serif; font-weight: 700; letter-spacing: 0.03em;
+    font-size: clamp(16px, 2vw, 22px); color: var(--text);
+    display: flex; align-items: baseline; gap: 12px; justify-content: center;
+    text-shadow: 0 3px 16px rgba(0,0,0,0.9), 0 1px 4px rgba(0,0,0,0.85);
+  }
+  .act-list-item span { font-size: 11px; color: var(--gold); letter-spacing: 0.1em; }
+
   .hero-wordmark {
     font-family: 'Cinzel', serif;
-    font-size: clamp(44px, 5.5vw, 80px);
+    font-size: clamp(40px, 7vw, 88px);
     font-weight: 900;
     letter-spacing: 0.06em;
     line-height: 1;
     color: var(--gold);
     margin-bottom: 22px;
-    display: block; white-space: nowrap;
+    text-shadow: 0 4px 30px rgba(0,0,0,0.9);
   }
   .hero-wordmark .letter {
     display: inline-block;
@@ -176,19 +214,20 @@
     font-weight: 600; letter-spacing: 0.04em;
     color: var(--text);
     margin-bottom: 20px;
-    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.7s both;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9);
   }
   .hero-sub {
     font-size: clamp(14px, 1.1vw, 17px);
-    color: var(--text-mid); line-height: 1.75;
-    max-width: 50ch; margin-bottom: 44px;
+    color: var(--text); line-height: 1.75;
+    max-width: 50ch; margin: 0 auto 36px;
     font-weight: 400;
-    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.82s both;
+    text-shadow: 0 2px 12px rgba(0,0,0,0.9);
   }
   .hero-actions {
-    display: flex; align-items: center; gap: 12px;
-    animation: fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.95s both;
+    display: flex; align-items: center; justify-content: center; gap: 12px;
   }
+  .hero-actions button, .hero-actions a,
+  .act-final-actions button, .act-final-actions a { pointer-events: auto; }
 
   .btn-primary {
     font-size: 12px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
@@ -227,24 +266,6 @@
   .btn-ghost:hover { border-color: var(--text-mid); color: var(--text); }
   .btn-ghost:active { transform: scale(0.97); transition-duration: 100ms; }
 
-  .hero-visual {
-    z-index: 1;
-    position: relative;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .precision-wrap {
-    width: clamp(260px, 33vw, 460px);
-    height: clamp(260px, 33vw, 460px);
-    animation: fade-in 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s both;
-    will-change: opacity;
-  }
-  .precision-svg { width: 100%; height: 100%; overflow: visible; }
-  .prec-stroke { stroke: var(--gold); fill: none; }
-  .prec-fill   { fill: var(--gold); stroke: none; }
-  .ring-r3 { transform-box: fill-box; transform-origin: center; animation: ring-cw  90s linear infinite; }
-  .ring-r2 { transform-box: fill-box; transform-origin: center; animation: ring-ccw 55s linear infinite; }
-  .ring-r1 { transform-box: fill-box; transform-origin: center; animation: ring-cw  35s linear infinite; }
-
   /* ── BACKGROUND PRECISION INSTRUMENT ── */
   #bg-precision {
     position: fixed; inset: 0; z-index: 0;
@@ -261,18 +282,17 @@
   .bg-ring-r1 { transform-box: fill-box; transform-origin: center; animation: ring-cw  105s linear infinite; }
 
   .hero-scroll {
-    position: absolute; bottom: 32px; left: 72px;
-    display: flex; align-items: center; gap: 12px; z-index: 1;
-    animation: fade-in 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.3s both;
+    position: absolute; bottom: 32px; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 10px;
+    z-index: 3; opacity: 0.6;
   }
   .hero-scroll-label {
     font-size: 9px; letter-spacing: 0.28em; text-transform: uppercase; color: var(--text-low);
   }
   .hero-scroll-line {
-    width: 40px; height: 1px;
-    background: linear-gradient(to right, oklch(72% 0.135 82 / 0.4), transparent);
-    transform-origin: left;
-    animation: scroll-pulse 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.6s infinite;
+    width: 1px; height: 34px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+    animation: scroll-pulse 2.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) infinite;
   }
 
   /* ── MANIFESTO ── */
@@ -466,14 +486,18 @@
   @media (max-width: 767px) {
     nav { padding: 18px 24px; }
     .nav-links { display: none; }
-    .hero {
-      grid-template-columns: 1fr;
-      padding: 110px 24px 80px;
-      gap: 60px;
+    #pin-wrap { height: auto; }
+    #scene-host {
+      position: static; height: auto; width: auto;
+      display: block; padding: 110px 24px 60px;
     }
-    .hero-visual { display: none; }
-    .hero-scroll { left: 24px; }
-    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .act {
+      position: static; opacity: 1 !important; transform: none;
+      padding: 0; margin-bottom: 64px; pointer-events: auto;
+    }
+    .act::before { display: none; }
+    .hero-scroll { display: none; }
+    .hero-actions { flex-direction: column; align-items: stretch; }
     .btn-primary, .btn-ghost { width: 100%; text-align: center; }
     .manifesto { padding: 40px 24px; flex-direction: column; gap: 24px; }
     .services { padding: 64px 24px; }
@@ -490,7 +514,6 @@
 
   @media (min-width: 768px) and (max-width: 1023px) {
     nav { padding: 20px 40px; }
-    .hero { padding: 120px 40px 80px; gap: 24px; }
     .manifesto { padding: 48px 40px; }
     .services { padding: 80px 40px; }
     .service-row { padding: 36px 8px; }
@@ -511,7 +534,6 @@
     .service-row::before { display: none; }
     .service-row-arrow { opacity: 0.5; transform: none; }
     .marquee-track { animation: none; }
-    .ring-r1, .ring-r2, .ring-r3,
     .bg-ring-r1, .bg-ring-r2, .bg-ring-r3 { animation: none; }
   }
 </style>
@@ -533,28 +555,52 @@
   <a href="" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;" class="nav-cta">Book a Call</a>
 </nav>
 
-<section class="hero">
-  <div class="hero-content">
-    <h1 class="hero-wordmark" id="wordmark" aria-label="Sovereign"></h1>
-    <p class="hero-tagline">We Don't Build Websites. We Build Empires.</p>
-    <p class="hero-sub">
-      Websites that win clients. AI systems that cut costs. Applications that scale without breaking. Built for businesses that mean it.
-    </p>
-    <div class="hero-actions">
-      <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
-      <button class="btn-ghost">See Our Work</button>
-    </div>
-  </div>
+<section id="pin-wrap">
+  <div id="scene-host">
 
-  <div class="hero-visual" aria-hidden="true">
-    <div class="precision-wrap">
-      <svg class="precision-svg" viewBox="-155 -155 310 310" id="precision-svg"></svg>
+    <div class="act" id="act-1">
+      <h1 class="hero-wordmark" id="wordmark" aria-label="Sovereign"></h1>
+      <p class="hero-tagline">We Don't Build Websites. We Build Empires.</p>
+      <p class="hero-sub">
+        Websites that win clients. AI systems that cut costs. Applications that scale without breaking. Built for businesses that mean it.
+      </p>
+      <div class="hero-actions">
+        <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
+        <button class="btn-ghost">See Our Work</button>
+      </div>
     </div>
-  </div>
 
-  <div class="hero-scroll" aria-hidden="true">
-    <span class="hero-scroll-label">Scroll</span>
-    <div class="hero-scroll-line"></div>
+    <div class="act" id="act-2">
+      <div class="act-eyebrow">What We Do</div>
+      <p class="act-sub">Websites that win clients. AI systems that cut costs. Applications that scale without breaking.</p>
+    </div>
+
+    <div class="act" id="act-3">
+      <div class="act-eyebrow">Three Disciplines, One Standard</div>
+      <div class="act-list">
+        <div class="act-list-item"><span>01</span>Web Design &amp; Development</div>
+        <div class="act-list-item"><span>02</span>AI Integration</div>
+        <div class="act-list-item"><span>03</span>Full-Stack Development</div>
+      </div>
+    </div>
+
+    <div class="act" id="act-4">
+      <div class="act-eyebrow">Who We Are</div>
+      <p class="act-sub">Most agencies build websites. <strong style="color:var(--text)">We build competitive advantages</strong> — the digital infrastructure your competitors can't copy.</p>
+    </div>
+
+    <div class="act" id="act-5">
+      <div class="act-line">We don't build websites.<br>We build <em>empires</em>.</div>
+      <div class="hero-actions act-final-actions" style="margin-top:36px;">
+        <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
+        <a href="sms:+13856958044" class="btn-ghost">Send a Message</a>
+      </div>
+    </div>
+
+    <div class="hero-scroll" aria-hidden="true">
+      <span class="hero-scroll-label">Scroll</span>
+      <div class="hero-scroll-line"></div>
+    </div>
   </div>
 </section>
 
@@ -779,11 +825,451 @@
       }
     }
 
-    /* hero instrument — full detail, fast */
-    buildInstrument('precision-svg', 'ring', true, true);
     /* background instrument — same structure, slow via bg-ring-* classes */
     buildInstrument('bg-precision-svg', 'bg-ring', false, false);
   })();
+</script>
+
+<script type="module">
+  import * as THREE from 'three';
+  import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+  import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+  import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+  import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+  import { Lensflare, LensflareElement } from 'three/addons/objects/Lensflare.js';
+  import { gsap } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm';
+  import { ScrollTrigger } from 'https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger/+esm';
+  import Lenis from 'https://cdn.jsdelivr.net/npm/lenis@1.1.18/+esm';
+
+  gsap.registerPlugin(ScrollTrigger);
+
+  const lenis = new Lenis({ lerp: 0.1 });
+  lenis.on('scroll', ScrollTrigger.update);
+  gsap.ticker.add((time) => lenis.raf(time * 1000));
+  gsap.ticker.lagSmoothing(0);
+
+  const GOLD = 0xc9a455, GOLD_HI = 0xdcbd76, INDIGO = 0x6a5fc9;
+
+  const SNOISE_GLSL = `
+    vec3 mod289(vec3 x){return x-floor(x/289.0)*289.0;}
+    vec4 mod289(vec4 x){return x-floor(x/289.0)*289.0;}
+    vec4 permute(vec4 x){return mod289(((x*34.0)+1.0)*x);}
+    vec4 taylorInvSqrt(vec4 r){return 1.79284291400159 - 0.85373472095314 * r;}
+    float snoise(vec3 v){
+      const vec2 C = vec2(1.0/6.0, 1.0/3.0);
+      const vec4 D = vec4(0.0, 0.5, 1.0, 2.0);
+      vec3 i  = floor(v + dot(v, C.yyy));
+      vec3 x0 = v - i + dot(i, C.xxx);
+      vec3 g = step(x0.yzx, x0.xyz);
+      vec3 l = 1.0 - g;
+      vec3 i1 = min(g.xyz, l.zxy);
+      vec3 i2 = max(g.xyz, l.zxy);
+      vec3 x1 = x0 - i1 + C.xxx;
+      vec3 x2 = x0 - i2 + C.yyy;
+      vec3 x3 = x0 - D.yyy;
+      i = mod289(i);
+      vec4 p = permute(permute(permute(
+                i.z + vec4(0.0, i1.z, i2.z, 1.0))
+              + i.y + vec4(0.0, i1.y, i2.y, 1.0))
+              + i.x + vec4(0.0, i1.x, i2.x, 1.0));
+      float n_ = 0.142857142857;
+      vec3 ns = n_ * D.wyz - D.xzx;
+      vec4 j = p - 49.0 * floor(p * ns.z * ns.z);
+      vec4 x_ = floor(j * ns.z);
+      vec4 y_ = floor(j - 7.0 * x_);
+      vec4 x = x_ * ns.x + ns.yyyy;
+      vec4 y = y_ * ns.x + ns.yyyy;
+      vec4 h = 1.0 - abs(x) - abs(y);
+      vec4 b0 = vec4(x.xy, y.xy);
+      vec4 b1 = vec4(x.zw, y.zw);
+      vec4 s0 = floor(b0)*2.0 + 1.0;
+      vec4 s1 = floor(b1)*2.0 + 1.0;
+      vec4 sh = -step(h, vec4(0.0));
+      vec4 a0 = b0.xzyw + s0.xzyw*sh.xxyy;
+      vec4 a1 = b1.xzyw + s1.xzyw*sh.zzww;
+      vec3 p0 = vec3(a0.xy, h.x);
+      vec3 p1 = vec3(a0.zw, h.y);
+      vec3 p2 = vec3(a1.xy, h.z);
+      vec3 p3 = vec3(a1.zw, h.w);
+      vec4 norm = taylorInvSqrt(vec4(dot(p0,p0), dot(p1,p1), dot(p2,p2), dot(p3,p3)));
+      p0 *= norm.x; p1 *= norm.y; p2 *= norm.z; p3 *= norm.w;
+      vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
+      m = m * m;
+      return 42.0 * dot(m*m, vec4(dot(p0,x0), dot(p1,x1), dot(p2,x2), dot(p3,x3)));
+    }
+  `;
+
+  const host = document.getElementById('scene-host');
+  if (host && innerWidth > 767) {
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    renderer.setSize(innerWidth, innerHeight);
+    host.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+    camera.position.set(0, 0, 9.5);
+
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.15;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(new RenderPass(scene, camera));
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), 0.85, 0.4, 0.2);
+    composer.addPass(bloomPass);
+    composer.addPass(new OutputPass());
+
+    const TEX_BASE = 'https://cdn.jsdelivr.net/gh/mrdoob/three.js/examples/textures/';
+    const skybox = new THREE.CubeTextureLoader()
+      .setPath(TEX_BASE + 'cube/MilkyWay/')
+      .load(['dark-s_px.jpg', 'dark-s_nx.jpg', 'dark-s_py.jpg', 'dark-s_ny.jpg', 'dark-s_pz.jpg', 'dark-s_nz.jpg']);
+    scene.background = skybox;
+    scene.backgroundIntensity = 0.4;
+
+    function bakeNebulaTexture(size, colorA, colorB) {
+      const bakeMat = new THREE.ShaderMaterial({
+        uniforms: { colorA: { value: new THREE.Color(colorA) }, colorB: { value: new THREE.Color(colorB) } },
+        vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
+        fragmentShader: `
+          varying vec2 vUv;
+          uniform vec3 colorA;
+          uniform vec3 colorB;
+          ${SNOISE_GLSL}
+          float fbm(vec3 p){
+            float v = 0.0; float a = 0.5;
+            for (int i = 0; i < 4; i++){ v += a * snoise(p); p *= 2.0; a *= 0.5; }
+            return v;
+          }
+          void main(){
+            vec3 p = vec3(vUv * 3.0, 0.4);
+            float n = fbm(p);
+            n = smoothstep(0.05, 0.7, n);
+            vec3 col = mix(colorA, colorB, fbm(p * 1.6 + 5.0) * 0.5 + 0.5);
+            gl_FragColor = vec4(col, n * 0.55);
+          }
+        `,
+        transparent: true,
+      });
+      const rt = new THREE.WebGLRenderTarget(size, size);
+      const bakeScene = new THREE.Scene();
+      const bakeCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const bakePlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bakeMat);
+      bakeScene.add(bakePlane);
+      renderer.setRenderTarget(rt);
+      renderer.render(bakeScene, bakeCam);
+      renderer.setRenderTarget(null);
+      bakeMat.dispose();
+      bakePlane.geometry.dispose();
+      return rt.texture;
+    }
+
+    function bakeSunTexture(size) {
+      const bakeMat = new THREE.ShaderMaterial({
+        uniforms: {},
+        vertexShader: `varying vec2 vUv; void main() { vUv = uv; gl_Position = vec4(position, 1.0); }`,
+        fragmentShader: `
+          varying vec2 vUv;
+          ${SNOISE_GLSL}
+          float fbm(vec3 p){
+            float v = 0.0; float a = 0.5;
+            for (int i = 0; i < 4; i++){ v += a * snoise(p); p *= 2.3; a *= 0.5; }
+            return v;
+          }
+          void main(){
+            vec3 p = vec3(vUv * 7.0, 1.0);
+            float n = fbm(p);
+            float n2 = fbm(p * 2.4 + 10.0);
+            vec3 base = vec3(1.0, 0.82, 0.5);
+            vec3 hot  = vec3(1.0, 0.5, 0.14);
+            vec3 col = mix(base, hot, smoothstep(-0.3, 0.6, n));
+            col *= 0.8 + 0.35 * n2;
+            gl_FragColor = vec4(col, 1.0);
+          }
+        `,
+      });
+      const rt = new THREE.WebGLRenderTarget(size, size);
+      const bakeScene = new THREE.Scene();
+      const bakeCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+      const bakePlane = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), bakeMat);
+      bakeScene.add(bakePlane);
+      renderer.setRenderTarget(rt);
+      renderer.render(bakeScene, bakeCam);
+      renderer.setRenderTarget(null);
+      bakeMat.dispose();
+      bakePlane.geometry.dispose();
+      return rt.texture;
+    }
+
+    const nebulaTexture = bakeNebulaTexture(1024, GOLD, INDIGO);
+    const nebulaMat = new THREE.MeshBasicMaterial({
+      map: nebulaTexture, side: THREE.BackSide, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending,
+    });
+    const nebula = new THREE.Mesh(new THREE.SphereGeometry(28, 32, 32), nebulaMat);
+    scene.add(nebula);
+
+    scene.add(new THREE.AmbientLight(0x2a2418, 1.4));
+    const keyLight = new THREE.PointLight(GOLD_HI, 7, 30);
+    keyLight.position.set(4, 3, 6);
+    scene.add(keyLight);
+    const rimLight = new THREE.PointLight(INDIGO, 5, 30);
+    rimLight.position.set(-5, -2, -4);
+    scene.add(rimLight);
+    const fillLight = new THREE.PointLight(GOLD, 2.5, 30);
+    fillLight.position.set(0, -4, 3);
+    scene.add(fillLight);
+
+    const instrument = new THREE.Group();
+    scene.add(instrument);
+
+    function makeRimMaterial(color, rimColor, { metalness = 0.94, roughness = 0.14, emissive = 0x000000, emissiveIntensity = 0, rimStrength = 1.1, rimPower = 2.1 } = {}) {
+      const mat = new THREE.MeshStandardMaterial({ color, metalness, roughness, emissive, emissiveIntensity });
+      mat.onBeforeCompile = (shader) => {
+        shader.uniforms.rimColor = { value: new THREE.Color(rimColor) };
+        shader.uniforms.rimStrength = { value: rimStrength };
+        shader.uniforms.rimPower = { value: rimPower };
+        shader.fragmentShader = shader.fragmentShader
+          .replace('#include <common>', `#include <common>\nuniform vec3 rimColor;\nuniform float rimStrength;\nuniform float rimPower;`)
+          .replace('#include <emissivemap_fragment>', `#include <emissivemap_fragment>
+            {
+              float rf = pow(1.0 - saturate(dot(normalize(vNormal), normalize(vViewPosition))), rimPower);
+              totalEmissiveRadiance += rf * rimStrength * rimColor;
+            }`);
+      };
+      return mat;
+    }
+
+    function makeAtmosphereMaterial(color, power = 2.5, intensity = 1.0) {
+      return new THREE.ShaderMaterial({
+        uniforms: { glowColor: { value: new THREE.Color(color) }, power: { value: power }, intensity: { value: intensity } },
+        vertexShader: `
+          varying vec3 vNormalW;
+          varying vec3 vViewDirW;
+          void main() {
+            vNormalW = normalize(normalMatrix * normal);
+            vec4 mvPos = modelViewMatrix * vec4(position, 1.0);
+            vViewDirW = normalize(-mvPos.xyz);
+            gl_Position = projectionMatrix * mvPos;
+          }
+        `,
+        fragmentShader: `
+          varying vec3 vNormalW;
+          varying vec3 vViewDirW;
+          uniform vec3 glowColor;
+          uniform float power;
+          uniform float intensity;
+          void main() {
+            float rim = pow(1.0 - clamp(dot(vNormalW, vViewDirW), 0.0, 1.0), power);
+            gl_FragColor = vec4(glowColor, rim * intensity);
+          }
+        `,
+        transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+      });
+    }
+
+    const texLoader = new THREE.TextureLoader();
+    const PLANET_TEX = TEX_BASE + 'planets/';
+
+    const sunMat = makeRimMaterial(GOLD_HI, GOLD_HI, { metalness: 0.15, roughness: 0.4, emissive: 0xffffff, emissiveIntensity: 1.0, rimStrength: 1.6, rimPower: 1.8 });
+    sunMat.emissiveMap = bakeSunTexture(1024);
+    sunMat.needsUpdate = true;
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(0.52, 48, 48), sunMat);
+    instrument.add(sun);
+    const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(0.72, 32, 32), makeAtmosphereMaterial(GOLD_HI, 2.2, 1.3));
+    instrument.add(sunGlow);
+
+    const flareBase = TEX_BASE + 'lensflare/';
+    const flareTex0 = texLoader.load(flareBase + 'lensflare0.png');
+    const flareTex3 = texLoader.load(flareBase + 'lensflare3.png');
+    const lensflare = new Lensflare();
+    lensflare.addElement(new LensflareElement(flareTex0, 380, 0, new THREE.Color(GOLD_HI)));
+    lensflare.addElement(new LensflareElement(flareTex3, 60, 0.6));
+    lensflare.addElement(new LensflareElement(flareTex3, 80, 0.75));
+    lensflare.addElement(new LensflareElement(flareTex3, 120, 0.9));
+    lensflare.addElement(new LensflareElement(flareTex3, 70, 1.0));
+    const sunLight = new THREE.PointLight(GOLD_HI, 0);
+    sunLight.add(lensflare);
+    instrument.add(sunLight);
+
+    function makeRingTexture(hex) {
+      const c = new THREE.Color(hex);
+      const rgb = `${Math.floor(c.r * 255)},${Math.floor(c.g * 255)},${Math.floor(c.b * 255)}`;
+      const canvas = document.createElement('canvas');
+      canvas.width = 128; canvas.height = 16;
+      const ctx = canvas.getContext('2d');
+      const grad = ctx.createLinearGradient(0, 0, 128, 0);
+      grad.addColorStop(0.0, `rgba(${rgb},0)`);
+      grad.addColorStop(0.35, `rgba(${rgb},0.5)`);
+      grad.addColorStop(0.55, `rgba(${rgb},0.12)`);
+      grad.addColorStop(0.75, `rgba(${rgb},0.45)`);
+      grad.addColorStop(1.0, `rgba(${rgb},0)`);
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 128, 16);
+      return new THREE.CanvasTexture(canvas);
+    }
+
+    function makeOrbit(radiusA, eccentricity, tilt, color, planetSize, speed, spinSpeed, opts = {}) {
+      const { hasRing = false, bumpUrl = null, cloudUrl = null, roughness = 0.6, metalness = 0.2 } = opts;
+      const radiusB = radiusA * (1 - eccentricity);
+      const orbitGroup = new THREE.Group();
+      orbitGroup.rotation.set(tilt.x, tilt.y, tilt.z);
+
+      const segments = 128;
+      const pts = [];
+      for (let i = 0; i <= segments; i++) {
+        const a = (i / segments) * Math.PI * 2;
+        pts.push(new THREE.Vector3(Math.cos(a) * radiusA, Math.sin(a) * radiusB, 0));
+      }
+      const pathGeo = new THREE.BufferGeometry().setFromPoints(pts);
+      const pathMat = new THREE.LineBasicMaterial({ color: GOLD, transparent: true, opacity: 0.25 });
+      orbitGroup.add(new THREE.LineLoop(pathGeo, pathMat));
+
+      const planetMat = makeRimMaterial(color, color, { metalness, roughness, rimStrength: 0.7, rimPower: 2.6 });
+      if (bumpUrl) {
+        planetMat.bumpMap = texLoader.load(bumpUrl);
+        planetMat.bumpScale = 0.04;
+        planetMat.needsUpdate = true;
+      }
+      const planet = new THREE.Mesh(new THREE.SphereGeometry(planetSize, 48, 48), planetMat);
+
+      const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(planetSize * 1.18, 32, 32), makeAtmosphereMaterial(color, 2.6, 1.0));
+      planet.add(atmosphere);
+
+      let clouds = null;
+      if (cloudUrl) {
+        const cloudTex = texLoader.load(cloudUrl);
+        cloudTex.colorSpace = THREE.SRGBColorSpace;
+        clouds = new THREE.Mesh(
+          new THREE.SphereGeometry(planetSize * 1.03, 48, 48),
+          new THREE.MeshStandardMaterial({ alphaMap: cloudTex, transparent: true, color: 0xffffff, roughness: 1, depthWrite: false })
+        );
+        planet.add(clouds);
+      }
+
+      orbitGroup.add(planet);
+
+      let ring = null;
+      if (hasRing) {
+        const ringGeo = new THREE.RingGeometry(planetSize * 1.7, planetSize * 3.0, 64);
+        const ringMat = new THREE.MeshBasicMaterial({ map: makeRingTexture(color), transparent: true, side: THREE.DoubleSide, opacity: 0.85, depthWrite: false });
+        ring = new THREE.Mesh(ringGeo, ringMat);
+        ring.rotation.x = Math.PI / 2.3;
+        orbitGroup.add(ring);
+      }
+
+      instrument.add(orbitGroup);
+      return { orbitGroup, planet, ring, clouds, radiusA, radiusB, speed, spinSpeed, angle: Math.random() * Math.PI * 2 };
+    }
+
+    const orbits = [
+      makeOrbit(3.0, 0.18, { x: 0.5, y: 0.1, z: 0 }, GOLD_HI, 0.15, (2 * Math.PI) / 26, 0.6, {
+        hasRing: true, bumpUrl: PLANET_TEX + 'moon_1024.jpg', roughness: 0.8, metalness: 0.1,
+      }),
+      makeOrbit(2.1, 0.1, { x: -0.6, y: 0.85, z: 0.15 }, INDIGO, 0.19, -(2 * Math.PI) / 16, 0.9, {
+        bumpUrl: PLANET_TEX + 'earth_normal_2048.jpg', cloudUrl: PLANET_TEX + 'earth_clouds_1024.png', roughness: 0.55, metalness: 0.15,
+      }),
+      makeOrbit(1.2, 0.25, { x: 1.05, y: -0.35, z: 0.4 }, GOLD, 0.11, (2 * Math.PI) / 8, 1.4, {
+        bumpUrl: PLANET_TEX + 'moon_1024.jpg', roughness: 0.85, metalness: 0.25,
+      }),
+    ];
+
+    const starCount = 140;
+    const starPositions = new Float32Array(starCount * 3);
+    for (let i = 0; i < starCount; i++) {
+      const r = 4.5 + Math.random() * 4;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(Math.random() * 2 - 1);
+      starPositions[i * 3] = r * Math.sin(phi) * Math.cos(theta);
+      starPositions[i * 3 + 1] = r * Math.sin(phi) * Math.sin(theta);
+      starPositions[i * 3 + 2] = r * Math.cos(phi) - 2;
+    }
+    const starGeo = new THREE.BufferGeometry();
+    starGeo.setAttribute('position', new THREE.BufferAttribute(starPositions, 3));
+    const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: GOLD, size: 0.025, transparent: true, opacity: 0.45 }));
+    scene.add(stars);
+
+    let mouseX = 0, mouseY = 0, targetX = 0, targetY = 0;
+    addEventListener('mousemove', (e) => {
+      mouseX = (e.clientX / innerWidth - 0.5) * 2;
+      mouseY = (e.clientY / innerHeight - 0.5) * 2;
+    }, { passive: true });
+
+    const clock = new THREE.Clock();
+
+    let heroVisible = true;
+    new IntersectionObserver((entries) => { heroVisible = entries[0].isIntersecting; }, { threshold: 0 })
+      .observe(document.getElementById('pin-wrap'));
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) clock.getDelta();
+    });
+
+    function animate() {
+      const dt = Math.min(clock.getDelta(), 1 / 30);
+      if (heroVisible) {
+        const t = clock.elapsedTime;
+        sun.material.emissiveIntensity = 0.75 + Math.sin(t * 1.6) * 0.15;
+        orbits.forEach((o) => {
+          o.angle += o.speed * dt;
+          const x = Math.cos(o.angle) * o.radiusA, y = Math.sin(o.angle) * o.radiusB;
+          o.planet.position.set(x, y, 0);
+          o.planet.rotation.y += o.spinSpeed * dt;
+          if (o.ring) o.ring.position.set(x, y, 0);
+          if (o.clouds) o.clouds.rotation.y += o.spinSpeed * 0.5 * dt;
+        });
+        stars.rotation.y += 0.015 * dt;
+
+        targetX += (mouseX - targetX) * 0.04;
+        targetY += (mouseY - targetY) * 0.04;
+        instrument.rotation.y += (targetX * 0.35 - instrument.rotation.y) * 0.02;
+        instrument.rotation.x += (-targetY * 0.25 - instrument.rotation.x) * 0.02;
+
+        composer.render();
+      }
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    addEventListener('resize', () => {
+      if (innerWidth <= 767) return;
+      camera.aspect = innerWidth / innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(innerWidth, innerHeight);
+      composer.setSize(innerWidth, innerHeight);
+      bloomPass.resolution.set(Math.floor(innerWidth / 2), Math.floor(innerHeight / 2));
+    });
+
+    const tl = gsap.timeline({
+      scrollTrigger: { trigger: '#pin-wrap', start: 'top top', end: 'bottom bottom', scrub: 0.6 },
+    });
+
+    tl.set('#act-1', { opacity: 1 }, 0)
+      .to(camera.position, { z: 7.4, duration: 0.18 }, 0)
+      .to('#act-1', { opacity: 0, duration: 0.06 }, 0.14)
+
+      .to(instrument.scale, { x: 1.08, y: 1.08, z: 1.08, duration: 0.14 }, 0.20)
+      .to(camera.position, { z: 6.4, duration: 0.14 }, 0.20)
+      .to('#act-2', { opacity: 1, duration: 0.06 }, 0.24)
+      .to('#act-2', { opacity: 0, duration: 0.06 }, 0.36)
+
+      .to(instrument.rotation, { y: '+=0.5', duration: 0.14 }, 0.40)
+      .to(camera.position, { z: 5.4, duration: 0.14 }, 0.40)
+      .to('#act-3', { opacity: 1, duration: 0.06 }, 0.44)
+      .to('#act-3', { opacity: 0, duration: 0.06 }, 0.58)
+
+      .to(orbits[0].orbitGroup.rotation, { x: 0, y: 0, duration: 0.14 }, 0.62)
+      .to(orbits[1].orbitGroup.rotation, { x: 0, y: 0, duration: 0.14 }, 0.62)
+      .to(orbits[2].orbitGroup.rotation, { x: 0, y: 0, duration: 0.14 }, 0.62)
+      .to(camera.position, { z: 7.0, duration: 0.14 }, 0.62)
+      .to('#act-4', { opacity: 1, duration: 0.06 }, 0.66)
+      .to('#act-4', { opacity: 0, duration: 0.06 }, 0.80)
+
+      .to(instrument.scale, { x: 1.2, y: 1.2, z: 1.2, duration: 0.14 }, 0.84)
+      .to(instrument.rotation, { x: '+=0.3', duration: 0.14 }, 0.84)
+      .to(camera.position, { z: 8.6, duration: 0.14 }, 0.84)
+      .to('#act-5', { opacity: 1, duration: 0.06 }, 0.88)
+      .to('#act-5', { opacity: 1, duration: 0.06 }, 0.98);
+  }
 </script>
 
 </body>
