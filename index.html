@@ -36,7 +36,6 @@
     --rule:       oklch(20% 0.010 75);
   }
 
-  html { scroll-behavior: smooth; }
   body {
     background-color: var(--ink);
     background-image: radial-gradient(oklch(72% 0.135 82 / 0.055) 1px, transparent 1px);
@@ -550,11 +549,11 @@
   <div class="nav-logo">SOVEREIGN</div>
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
-    <li><a href="#">Work</a></li>
-    <li><a href="#">About</a></li>
-    <li><a href="#">Contact</a></li>
+    <li><a href="#services">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact">Contact</a></li>
   </ul>
-  <a href="" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;" class="nav-cta">Book a Call</a>
+  <a href="https://calendly.com/jackson-sovereign" onclick="return openCalendly(event);" class="nav-cta">Book a Call</a>
 </nav>
 
 <section id="pin-wrap">
@@ -567,14 +566,14 @@
         Websites that win clients. AI systems that cut costs. Applications that scale without breaking. Built for businesses that mean it.
       </p>
       <div class="hero-actions">
-        <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
-        <button class="btn-ghost">See Our Work</button>
+        <button class="btn-primary" onclick="return openCalendly(event);"><span>Book a Call</span></button>
+        <button class="btn-ghost" onclick="scrollToId('services');">See Our Work</button>
       </div>
     </div>
 
     <div class="act" id="act-2">
       <div class="act-eyebrow">What We Do</div>
-      <p class="act-sub">Websites that win clients. AI systems that cut costs. Applications that scale without breaking.</p>
+      <p class="act-sub">One team. Three disciplines. Every project held to the same standard.</p>
     </div>
 
     <div class="act" id="act-3">
@@ -588,13 +587,13 @@
 
     <div class="act" id="act-4">
       <div class="act-eyebrow">Who We Are</div>
-      <p class="act-sub">Most agencies build websites. <strong style="color:var(--text)">We build competitive advantages</strong> — the digital infrastructure your competitors can't copy.</p>
+      <p class="act-sub">Not a vendor you call once. <strong style="color:var(--text)">A technical edge</strong> your competitors don't have.</p>
     </div>
 
     <div class="act" id="act-5">
       <div class="act-line">We don't build websites.<br>We build <em>empires</em>.</div>
       <div class="hero-actions act-final-actions" style="margin-top:36px;">
-        <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
+        <button class="btn-primary" onclick="return openCalendly(event);"><span>Book a Call</span></button>
         <a href="sms:+13856958044" class="btn-ghost">Send a Message</a>
       </div>
     </div>
@@ -623,7 +622,7 @@
   </div>
 </div>
 
-<div class="manifesto reveal">
+<div class="manifesto reveal" id="about">
   <div class="manifesto-accent">
     <div class="manifesto-dash"></div>
     <div class="manifesto-dash"></div>
@@ -676,7 +675,7 @@
       <div class="cta-sub-text">One conversation. No pitch. Just an honest assessment of what it takes.</div>
     </div>
     <div class="cta-actions">
-      <button class="btn-primary" onclick="Calendly.initPopupWidget({url:'https://calendly.com/jackson-sovereign'}); return false;"><span>Book a Call</span></button>
+      <button class="btn-primary" onclick="return openCalendly(event);"><span>Book a Call</span></button>
       <a href="sms:+13856958044" class="btn-ghost">Send a Message</a>
     </div>
   </div>
@@ -688,6 +687,32 @@
 </footer>
 
 <script>
+  function openCalendly(event) {
+    if (event) event.preventDefault();
+    if (window.Calendly) {
+      Calendly.initPopupWidget({ url: 'https://calendly.com/jackson-sovereign' });
+    } else {
+      window.open('https://calendly.com/jackson-sovereign', '_blank', 'noopener');
+    }
+    return false;
+  }
+
+  function scrollToId(id) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    if (window.__lenis) window.__lenis.scrollTo(el);
+    else el.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  document.addEventListener('click', (e) => {
+    const link = e.target.closest('a[href^="#"]');
+    if (!link) return;
+    const id = link.getAttribute('href').slice(1);
+    if (!id || !document.getElementById(id)) return;
+    e.preventDefault();
+    scrollToId(id);
+  });
+
   const wordmark = document.getElementById('wordmark');
   'SOVEREIGN'.split('').forEach((char, i) => {
     const span = document.createElement('span');
@@ -846,6 +871,7 @@
   gsap.registerPlugin(ScrollTrigger);
 
   const lenis = new Lenis({ lerp: 0.5 });
+  window.__lenis = lenis;
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
