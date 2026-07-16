@@ -843,7 +843,7 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const lenis = new Lenis({ lerp: 0.1 });
+  const lenis = new Lenis({ lerp: 0.22 });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
@@ -901,8 +901,8 @@
 
   const host = document.getElementById('scene-host');
   if (host && innerWidth > 767) {
-    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'low-power' });
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 1.5));
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(devicePixelRatio, 1));
     renderer.setSize(innerWidth, innerHeight);
     host.appendChild(renderer.domElement);
 
@@ -916,7 +916,7 @@
 
     const composer = new EffectComposer(renderer);
     composer.addPass(new RenderPass(scene, camera));
-    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth / 2, innerHeight / 2), 0.85, 0.4, 0.2);
+    const bloomPass = new UnrealBloomPass(new THREE.Vector2(innerWidth / 4, innerHeight / 4), 0.85, 0.4, 0.2);
     composer.addPass(bloomPass);
     composer.addPass(new OutputPass());
 
@@ -1008,16 +1008,13 @@
     const nebula = new THREE.Mesh(new THREE.SphereGeometry(28, 32, 32), nebulaMat);
     scene.add(nebula);
 
-    scene.add(new THREE.AmbientLight(0x2a2418, 1.4));
+    scene.add(new THREE.AmbientLight(0x2a2418, 1.9));
     const keyLight = new THREE.PointLight(GOLD_HI, 7, 30);
     keyLight.position.set(4, 3, 6);
     scene.add(keyLight);
     const rimLight = new THREE.PointLight(INDIGO, 5, 30);
     rimLight.position.set(-5, -2, -4);
     scene.add(rimLight);
-    const fillLight = new THREE.PointLight(GOLD, 2.5, 30);
-    fillLight.position.set(0, -4, 3);
-    scene.add(fillLight);
 
     const instrument = new THREE.Group();
     scene.add(instrument);
@@ -1073,9 +1070,9 @@
     const sunMat = makeRimMaterial(GOLD_HI, GOLD_HI, { metalness: 0.15, roughness: 0.4, emissive: 0xffffff, emissiveIntensity: 1.0, rimStrength: 1.6, rimPower: 1.8 });
     sunMat.emissiveMap = bakeSunTexture(1024);
     sunMat.needsUpdate = true;
-    const sun = new THREE.Mesh(new THREE.SphereGeometry(0.52, 48, 48), sunMat);
+    const sun = new THREE.Mesh(new THREE.SphereGeometry(0.52, 24, 24), sunMat);
     instrument.add(sun);
-    const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(0.72, 32, 32), makeAtmosphereMaterial(GOLD_HI, 2.2, 1.3));
+    const sunGlow = new THREE.Mesh(new THREE.SphereGeometry(0.72, 20, 20), makeAtmosphereMaterial(GOLD_HI, 2.2, 1.3));
     instrument.add(sunGlow);
 
     const flareBase = TEX_BASE + 'lensflare/';
@@ -1087,7 +1084,7 @@
     lensflare.addElement(new LensflareElement(flareTex3, 80, 0.75));
     lensflare.addElement(new LensflareElement(flareTex3, 120, 0.9));
     lensflare.addElement(new LensflareElement(flareTex3, 70, 1.0));
-    const sunLight = new THREE.PointLight(GOLD_HI, 0);
+    const sunLight = new THREE.Object3D();
     sunLight.add(lensflare);
     instrument.add(sunLight);
 
@@ -1130,9 +1127,9 @@
         planetMat.bumpScale = 0.04;
         planetMat.needsUpdate = true;
       }
-      const planet = new THREE.Mesh(new THREE.SphereGeometry(planetSize, 48, 48), planetMat);
+      const planet = new THREE.Mesh(new THREE.SphereGeometry(planetSize, 24, 24), planetMat);
 
-      const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(planetSize * 1.18, 32, 32), makeAtmosphereMaterial(color, 2.6, 1.0));
+      const atmosphere = new THREE.Mesh(new THREE.SphereGeometry(planetSize * 1.18, 20, 20), makeAtmosphereMaterial(color, 2.6, 1.0));
       planet.add(atmosphere);
 
       let clouds = null;
@@ -1140,7 +1137,7 @@
         const cloudTex = texLoader.load(cloudUrl);
         cloudTex.colorSpace = THREE.SRGBColorSpace;
         clouds = new THREE.Mesh(
-          new THREE.SphereGeometry(planetSize * 1.03, 48, 48),
+          new THREE.SphereGeometry(planetSize * 1.03, 24, 24),
           new THREE.MeshStandardMaterial({ alphaMap: cloudTex, transparent: true, color: 0xffffff, roughness: 1, depthWrite: false })
         );
         planet.add(clouds);
@@ -1236,11 +1233,11 @@
       camera.updateProjectionMatrix();
       renderer.setSize(innerWidth, innerHeight);
       composer.setSize(innerWidth, innerHeight);
-      bloomPass.resolution.set(Math.floor(innerWidth / 2), Math.floor(innerHeight / 2));
+      bloomPass.resolution.set(Math.floor(innerWidth / 4), Math.floor(innerHeight / 4));
     });
 
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: '#pin-wrap', start: 'top top', end: 'bottom bottom', scrub: 0.6 },
+      scrollTrigger: { trigger: '#pin-wrap', start: 'top top', end: 'bottom bottom', scrub: 0.3 },
     });
 
     tl.set('#act-1', { opacity: 1 }, 0)
