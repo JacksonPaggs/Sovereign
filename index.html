@@ -843,7 +843,7 @@
 
   gsap.registerPlugin(ScrollTrigger);
 
-  const lenis = new Lenis({ lerp: 0.22 });
+  const lenis = new Lenis({ lerp: 0.5 });
   lenis.on('scroll', ScrollTrigger.update);
   gsap.ticker.add((time) => lenis.raf(time * 1000));
   gsap.ticker.lagSmoothing(0);
@@ -1237,7 +1237,7 @@
     });
 
     const tl = gsap.timeline({
-      scrollTrigger: { trigger: '#pin-wrap', start: 'top top', end: 'bottom bottom', scrub: 0.3 },
+      scrollTrigger: { trigger: '#pin-wrap', start: 'top top', end: 'bottom bottom', scrub: 0.15 },
     });
 
     tl.set('#act-1', { opacity: 1 }, 0)
