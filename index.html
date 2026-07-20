@@ -552,8 +552,11 @@
       position: static; height: auto; width: auto;
       display: block; padding: 110px 24px 60px;
     }
+    /* Canvas becomes an ambient backdrop filling #pin-wrap (nearest positioned
+       ancestor); acts stack above it. */
+    #scene-host canvas { z-index: 0; }
     .act {
-      position: static; opacity: 1 !important; transform: none;
+      position: relative; z-index: 1; opacity: 1 !important; transform: none;
       padding: 0; margin-bottom: 64px; pointer-events: auto;
     }
     .act::before { display: none; }
@@ -1021,13 +1024,22 @@
   let sceneStarted = false;
 
   function initScene() {
+    const pinWrap = document.getElementById('pin-wrap');
+    const isMobileViewport = () => matchMedia('(max-width: 767px)').matches;
+    // Mobile: canvas backdrops the whole stacked hero (#pin-wrap), not the window.
+    // Wider FOV so the portrait aspect still fits the orbit radii.
+    const viewSize = () =>
+      isMobileViewport() ? [pinWrap.clientWidth, pinWrap.clientHeight] : [innerWidth, innerHeight];
+    const viewFov = () => (isMobileViewport() ? 72 : 45);
+
+    const [vw, vh] = viewSize();
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
     renderer.setPixelRatio(Math.min(devicePixelRatio, 1));
-    renderer.setSize(innerWidth, innerHeight);
+    renderer.setSize(vw, vh);
     host.appendChild(renderer.domElement);
 
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, innerWidth / innerHeight, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(viewFov(), vw / vh, 0.1, 100);
     camera.position.set(0, 0, 9.5);
 
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1348,12 +1360,13 @@
     animate();
 
     addEventListener('resize', () => {
-      if (innerWidth <= 767) return;
-      camera.aspect = innerWidth / innerHeight;
+      const [w, h] = viewSize();
+      camera.fov = viewFov();
+      camera.aspect = w / h;
       camera.updateProjectionMatrix();
-      renderer.setSize(innerWidth, innerHeight);
-      composer.setSize(innerWidth, innerHeight);
-      bloomPass.resolution.set(Math.floor(innerWidth / 4), Math.floor(innerHeight / 4));
+      renderer.setSize(w, h);
+      composer.setSize(w, h);
+      bloomPass.resolution.set(Math.floor(w / 4), Math.floor(h / 4));
     });
 
     const tl = gsap.timeline({
@@ -1405,10 +1418,7 @@
     }
   }
 
-  if (innerWidth > 767) startScene();
-  addEventListener('resize', () => {
-    if (innerWidth > 767) startScene();
-  });
+  startScene();
 </script>
 
 </body>
