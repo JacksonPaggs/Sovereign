@@ -547,24 +547,7 @@
     nav > .nav-cta { display: none; }
     .nav-burger { display: flex; }
     .mobile-menu { display: flex; }
-    #pin-wrap { height: auto; }
-    #scene-host {
-      position: static; height: auto; width: auto;
-      display: block; padding: 110px 24px 60px;
-    }
-    /* Canvas becomes an ambient backdrop filling #pin-wrap (nearest positioned
-       ancestor); acts stack above it. */
-    #scene-host canvas { z-index: 0; }
-    .act {
-      position: relative; z-index: 1; opacity: 1 !important; transform: none;
-      padding: 0; margin-bottom: 64px; pointer-events: auto;
-    }
-    .act::before { display: none; }
-    /* Acts 2-4 restate what's already said in the manifesto/services
-       sections below; without scroll-triggered animation to separate them
-       on mobile, showing both reads as literal repeated copy. */
-    #act-2, #act-3, #act-4 { display: none; }
-    .hero-scroll { display: none; }
+    .act { padding: 0 24px; }
     .hero-actions { flex-direction: column; align-items: stretch; }
     .btn-primary, .btn-ghost { width: 100%; text-align: center; }
     .manifesto { padding: 40px 24px; flex-direction: column; gap: 24px; }
@@ -1024,13 +1007,10 @@
   let sceneStarted = false;
 
   function initScene() {
-    const pinWrap = document.getElementById('pin-wrap');
-    const isMobileViewport = () => matchMedia('(max-width: 767px)').matches;
-    // Mobile: canvas backdrops the whole stacked hero (#pin-wrap), not the window.
-    // Wider FOV so the portrait aspect still fits the orbit radii.
-    const viewSize = () =>
-      isMobileViewport() ? [pinWrap.clientWidth, pinWrap.clientHeight] : [innerWidth, innerHeight];
-    const viewFov = () => (isMobileViewport() ? 72 : 45);
+    // Portrait/narrow viewports (mobile) need a wider FOV so the orbit
+    // radii still fit the frame instead of clipping at the edges.
+    const viewSize = () => [innerWidth, innerHeight];
+    const viewFov = () => (innerWidth / innerHeight < 0.9 ? 72 : 45);
 
     const [vw, vh] = viewSize();
     const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
