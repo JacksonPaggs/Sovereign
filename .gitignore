@@ -2,3 +2,5 @@
 .env*
 node_modules
 temporary screenshots/
+# master render for the hero frame sequence — kept on disk, too big for git
+assets/hero/_source/
