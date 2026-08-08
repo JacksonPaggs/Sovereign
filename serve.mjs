@@ -16,6 +16,7 @@ const MIME = {
   '.jpg':  'image/jpeg',
   '.jpeg': 'image/jpeg',
   '.gif':  'image/gif',
+  '.webp': 'image/webp',
   '.svg':  'image/svg+xml',
   '.ico':  'image/x-icon',
   '.woff': 'font/woff',
@@ -75,7 +76,9 @@ createServer(async (req, res) => {
   try {
     const data = await readFile(file);
     const type = MIME[extname(file)] || 'application/octet-stream';
-    res.writeHead(200, { 'Content-Type': type });
+    // Dev server: never cache. Regenerated assets reuse their filenames, so a
+    // cached copy silently serves the previous build's frames.
+    res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store, max-age=0' });
     res.end(data);
   } catch {
     res.writeHead(404);
