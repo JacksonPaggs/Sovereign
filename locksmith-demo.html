@@ -27,7 +27,7 @@
 
     /* === RESET === */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: hidden; } /* the absolute hero glows extend past the viewport; body alone does not clip on iOS */
     body {
       font-family: 'Inter', sans-serif;
       background: var(--base);

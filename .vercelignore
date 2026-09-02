@@ -1,0 +1,20 @@
+# Deploy allow-list by exclusion: only the site itself goes to Vercel.
+# Internal docs, agent configs, local tooling and the session transcript stay local.
+.agents/
+.claude/
+.superpowers/
+.vercel/
+docs/
+node_modules/
+temporary screenshots/
+assets/hero/_source/
+CLAUDE.md
+HANDOFF.md
+PRODUCT.md
+screenshot.mjs
+serve.mjs
+skills-lock.json
+package.json
+package-lock.json
+.env.local
+.gitignore
